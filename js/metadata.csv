@@ -1,0 +1,38 @@
+﻿q1,q2,type,acronym,description,biological data domain,link,submission,spreadsheet
+Plant,,Minimum Information standards,MIAPPE,Minimum Information About a Plant Phenotyping Experiment,phenotypic,https://www.miappe.org/,,YES
+Plant,,Minimum Information standards,MIAME,Minimum Information About a Microarray Experiment,transcriptomic,,,NO
+Plant,,Minimum Information standards,MIxS,Minimum Information about a Genome Sequence/ Minimum Information about a Metagenomic Sequence/Sample,(meta)genomic,https://github.com/GenomicsStandardsConsortium/mixs,,Not to be added- is 'upper level' of other MI lists
+Plant,,Minimum Information standards,MIGSPlant,Minimum information about a genome sequence: Plant,(meta)genomic,https://genomicsstandardsconsortium.github.io/mixs/MIGSPlant/,,YES
+Plant,,Minimum Information standards,MIGS,** Is now divided into multiple MIGS*** https://genomicsstandardsconsortium.github.io/mixs/#checklists,(meta)genomic,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2409278/,,
+Plant,,Minimum Information standards,MIMS,Metagenome or Environmental (part of MIxS),(meta)genomic,https://pubmed.ncbi.nlm.nih.gov/18479204/,,YES
+Plant,,Minimum Information standards,MIMARKSSpecimen,Minimal Information about a Marker Specimen: specimen (part of MIxS),(meta)genomic,https://pubmed.ncbi.nlm.nih.gov/21552244/,,YES
+Plant,,Minimum Information standards,MIMARKSSurvey,Minimal Information about a Marker Specimen: survey,(meta)genomic,,,YES
+Plant,,Minimum Information standards,MIAPE,Minimum Information About a Proteomics Experiment ,proteomic,http://www.psidev.info/miape,,
+Plant,,Minimum Information standards,MIAPE-MS,MIAPE- MS (Mass Spectrometry),proteomic,https://www.psidev.info/sites/default/files/2018-03/MIAPE_MS_2.98.pdf,,YES
+Plant,,Minimum Information standards,MIAPE-MSI,MIAPE-MSI (Mass Spectrometry Informatics),proteomic,https://www.psidev.info/sites/default/files/2018-03/MIAPE_MSI_1.1.pdf,,
+Plant,,Minimum Information standards,MIAPE-Quant,MIAPE-Quant (Mass Spectrometry Quantification),proteomic,https://www.psidev.info/sites/default/files/2018-03/MIAPE_Quant_v1.0_Final_0.pdf,,
+Plant,,Minimum Information standards,MIAPE-GE,MIAPE-GE (Gel Electrophoresis),proteomic,https://www.psidev.info/sites/default/files/MIAPE_GE_1_4.pdf,,
+Plant,,Minimum Information standards,MIAPE-GI,MIAPE-GI (Gel Informatics),proteomic,https://www.psidev.info/sites/default/files/2018-03/miape-gi-v1.pdf,,
+Plant,,Minimum Information standards,MIAPE-CC,MIAPE-CC (Column Chromatography),proteomic,https://www.psidev.info/sites/default/files/2018-03/MIAPE_CC_1.1.pdf,,
+Plant,,Minimum Information standards,MIAPE-CE,MIAPE-CE (Capillary Electrophoresis),proteomic,,,
+Plant,,Minimum Information standards,MIMix,MIMIx (Molecular Interactions),proteomic,,,
+Plant,,Minimum Information standards,MINSEQE,Minimum Information about a high-throughput SEQuencing Experiment,transcriptomic,http://fged.org/projects/minseqe/,,NO
+Plant,,Minimum Information standards,MISAG,MISAG,(meta)genomic,https://www.nature.com/articles/nbt.3893,,NO
+Plant,,Minimum Information standards,MIMAG,MISAG,(meta)genomic,https://www.nature.com/articles/nbt.3893,,NO
+Plant,,Minimum Information standards,MIUViG,MISAG,(meta)genomic,https://pubmed.ncbi.nlm.nih.gov/30556814/,,NO
+Plant,,Repository,EBI-MetaboLights,EBI-MetaboLights,metabolomic,https://www.ebi.ac.uk/metabolights/,,NO
+Plant,,Repository,EBI-PRIDE,PRoteomics IDEntifications Database,proteomic,https://www.ebi.ac.uk/pride/,https://www.ebi.ac.uk/pride/markdownpage/submitdatapage,NO
+Plant,,Repository,NCBI-BioProject,NCBI-BioProject,projects,https://www.ncbi.nlm.nih.gov/bioproject/,,NO
+Plant,,Repository,NCBI-BioSample,NCBI-BioSample,samples,https://www.ncbi.nlm.nih.gov/biosample,,NO
+Plant,,Repository,NCBI-GenBank,NCBI-GenBank,genomic,https://www.ncbi.nlm.nih.gov/genbank/,,NO
+Plant,,Repository,NCBI-GEO,Gene Expression Omnibus,transcriptomic,https://www.ncbi.nlm.nih.gov/geo/,https://www.ncbi.nlm.nih.gov/geo/info/submission.html,NO
+Plant,,Repository,NCBI-SRA,Sequence Read Archive,genomic / transcriptomic sequences,https://www.ncbi.nlm.nih.gov/sra/,,NO
+Plant,,Repository,e!DAL-PGP,Plant Genomics & Phenomics Research Data Repository,phenotypic,https://edal.ipk-gatersleben.de/index.html,,NO
+Plant,,Repository,EBI-BioImage Archive,EBI-BioImage Archive,"imaging, microscopy",https://www.ebi.ac.uk/bioimage-archive/,,NO
+Plant,,Repository,EBI-ArrayExpress,Archive of Functional Genomics Data,transcriptomic,https://www.ebi.ac.uk/arrayexpress/,,NO
+Plant,,Repository,EBI-ENA,European Nucleotide Archive,genomic / transcriptomic sequences,https://www.ebi.ac.uk/ena/,,"ERC000011, ERC000020, ERC00035, ERC000037"
+Plant,,Repository,EBI-EMPIAR,EBI-EMPIAR,"imaging, microscopy",https://www.ebi.ac.uk/pdbe/emdb/empiar/,,NO
+Plant,,Repository,EBI-BioModels,EBI-BioModels,models,https://www.ebi.ac.uk/biomodels/,,NO
+Plant,,Repository,EBI-BioSamples,EBI-BioSamples,samples,https://www.ebi.ac.uk/biosamples/,,NO
+Plant,,Repository,EBI-BioStudies,EBI-BioStudies,projects,https://www.ebi.ac.uk/biostudies/,,NO
+Plant,,Repository,Metabolomics Workbench,Metabolomics Workbench,metabolomic,https://www.metabolomicsworkbench.org/,,NO

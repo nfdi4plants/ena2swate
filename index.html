@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="ENA Checklist to SWATE template">
+		<meta name="keywords" content="ENA, checklist, template, SWATE">
+    <meta charset="utf-8"/>
+    <title>ENA checklists to SWATE template</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="css/custom.css" rel="stylesheet"/>
+    <script src="js/bootstrap.bundle.min.js" type="text/javascript" charset="utf-8"> </script>	
+    <style>
+      .smallRef{
+        font-size: 0.7rem;
+        line-height: 0.9rem;
+      }
+      .description{
+        font-size: 0.9rem;
+        line-height: 1.1rem;
+      }
+      button:disabled{
+          border: 1px solid #999999 !important;
+          background-color: #377d98 !important;
+          opacity:1 !important;
+          color: #FFFFFF !important;
+        }
+        table{
+          table-layout: fixed;
+        }
+        th,
+        td {
+          border: 1px solid black;
+          #width: 20vw !important;
+          overflow: hidden;
+        }
+		</style>
+  </head>
+  <body class="d-grid gap-5" style="background: rgb(45, 62, 80, 0.2); " >
+    <script>
+      var spreadsheet;
+   var ENAsample, ENAsequence, ENAread, samplesChecklist, dataAnalysesChecklist ;
+     var ENAall = [ENAsample, ENAread, ENAsequence];
+     const ENAURL = [`https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/xml/*?type=sample`,
+  `https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/getReadFields`,
+  `https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/xml/*?type=sequence`
+]
+
+
+  async function fetchENAXML(ENAall ,ENAURL){
+    for (const [index, url] of ENAURL.entries()){ 
+      try {
+        //read xml and json from ENA server
+        const target = url;
+        const res = await fetch(target, {           
+            method: 'get',
+            headers: {                
+                'content-type': 'text/xml;charset=UTF-8',
+            }
+        });
+        if (res.status === 200) {
+            const data = await res.text();
+            
+            ENAall[index] = data;
+            //document.getElementById("submission").disabled = false;
+
+        } else {
+            console.log(`Error code ${res.status}`);
+        }
+      } catch (err) {
+          console.log(err)
+        }
+    }
+  }     
+  fetchENAXML( window.ENAall, ENAURL)
+      .then(()=>{
+        var parser = new DOMParser();
+        window.ENAall[0] = parser.parseFromString(window.ENAall[0],"text/xml");
+        window.ENAall[2] = parser.parseFromString(window.ENAall[2],"text/xml");
+        window.ENAall[1] = JSON.parse(window.ENAall[1]).fieldTypes;
+
+        //saveData(xlsxbuffer, "a.xlsx");
+      }
+    ).then(()=>{
+      
+      document.getElementById("samplesColumn").outerHTML= template(0, "samples");
+      document.getElementById("sTemplate").disabled = false;
+
+      document.getElementById("rawReadsColumn").outerHTML= templateJSON(1 ,"raw reads");
+      document.getElementById("rrTemplate").disabled = false;
+
+      document.getElementById("dataAnalysesColumn").outerHTML= template(2, "data analyses");
+      document.getElementById("daTemplate").disabled = false;
+
+    })
+    .catch(err => {console.log("fetch of ena xml failed, error is ", err)})
+
+// -------- 1. Create and manipulate object in datamodel ----------
+function template(id1, listName){
+  //<label for="checkDataList" class="form-label">checklist </label> 
+    let HTMLtext = `<input class="form-control" list="datalistOptions`+id1+`" id="checkDataList`+id1+`" placeholder="Type to search `+listName+` checklist...">
+    <datalist id="datalistOptions`+id1+`">
+    `;
+    const checklists = document.evaluate(
+      "//CHECKLIST",
+      ENAall[id1],
+      null,
+      XPathResult.ANY_TYPE,
+      null,
+    );
+    
+    var list1= checklists.iterateNext() ;
+    while (list1 != null )
+    {       
+      const checkid = list1.getAttribute("accession");
+      const name = list1.getElementsByTagName('DESCRIPTOR')[0].getElementsByTagName('NAME')[0].innerHTML;
+      //console.log(name);
+      HTMLtext +=   `<option name="`+id1+`" id="`+checkid +`" value="`+name+`" >` ;
+      list1 = checklists.iterateNext();
+      
+    }
+    HTMLtext += "</datalist>"; 
+    return HTMLtext;
+
+  }
+  function templateJSON(id1, listName){
+  //<label for="checkDataList" class="form-label">checklist </label> 
+    let HTMLtext = `<input class="form-control" list="datalistOptions`+id1+`" id="checkDataList`+id1+`" placeholder="Type to search `+listName+` checklist...">
+    <datalist id="datalistOptions`+id1+`">
+    `;
+    const checklists = ENAall[id1];
+    
+    
+    for (const [index, element] of Object.entries(checklists) )
+    {       
+      const checkid = index;
+      const name = element.name;
+      //console.log(name);
+      HTMLtext +=   `<option name="`+id1+`" id="`+checkid +`" value="`+name+": "+element.label+`" >` ;
+      
+      
+    }
+    HTMLtext += "</datalist>"; 
+    return HTMLtext;
+
+  }
+
+  var saveData = (function () {
+      var a = document.createElement("a");
+      document.body.appendChild(a);
+      a.style = "display: none";
+      return function (xlsxbuffer, fileName) {
+          
+          const blob = new Blob([xlsxbuffer]),
+              url = window.URL.createObjectURL(blob);
+          a.href = url;
+          a.download = fileName;
+          a.click();
+          window.URL.revokeObjectURL(url);
+      };
+  }());
+
+  function checkInput(checkName, id1, callback){
+    var selected = []; 
+    document.querySelectorAll("input[name="+checkName+"]").forEach((ele)=> {if(ele.checked){ selected.push(ele.value)  }}  ); 
+    console.log(selected);
+    if (document.getElementById("checkDataList"+id1).value == ""){
+
+      return alert("The checklist name is not selected, please select")
+      }
+
+      callback(id1,selected)
+  }
+   </script>
+   <script src="js/main.js"></script>
+   <div class="row" style="background: rgb(45, 62, 80); height: 3.25rem; margin: 0 0 0 0px; padding: 0 0 0 0; ">
+    <a class="" href="https://nfdi4plants.org/" >
+      <img src="images/logo.png" alt="Logo" width="32" height="32" style="position: absolute; margin: 8px 12px 8px 12px; left: 0px; padding-top: 0px;" />
+    </a>
+    
+    <div class="justify-content-center row d-flex align-items-center" style="margin: 0 0 0 0; ; padding: 0 0 0 0; height: 3.25rem;  ">
+      <div class="btn-group d-md-none g-0 dropdown col-auto d-flex align-items-center" >
+        <button type="button" class="btn rounded-0 border-0 g-0 btn-nav " data-bs-toggle="dropdown" aria-expanded="false" id="menu">
+          Menu &nbsp;
+          <span style="display: inline-block; color: rgb(79, 179, 217); letter-spacing: 2px; font-size: 1em; transform: scaleX(2); transform-origin: 1 0;"> ∨ </span>
+        </button>
+        <ul class="dropdown-menu">
+        <li>
+            <a id="metadata1" class="dropdown-item" href="https://github.com/xiaoranzhou/metadata">github source code</a>
+          </li>
+                         
+        </ul>
+      </div>
+
+      <div class="btn-group d-none g-0 d-md-block dropdown col-auto"  >
+        <button type="button" class="btn border-0 rounded-0 g-0 btn-nav" data-bs-toggle="dropdown" aria-expanded="false" id="metadataMenu" >
+          Menu &nbsp;
+
+          <span style="display: inline-block; color: rgb(79, 179, 217); letter-spacing: 2px; font-size: 1em; transform: scaleX(2); transform-origin: 1 0;"> ∨ </span>
+        </button>
+        <ul class="dropdown-menu" >
+          <li>
+            <a id="metadata2" class="dropdown-item" href="https://github.com/xiaoranzhou/metadata">github source code</a>
+          </li>
+                          
+        </ul>
+      </div>
+
+      
+    </div>
+  </div>
+  <div class="container text-center ">
+  <div class="row justify-content-center">
+    <h2>Generate SWATE template from ENA checklists </h2>
+    <h6>ENA has three checklists, namely samples, raw reads and data analyses. 
+      By select or search the checklist, a Swate template can be created. </h6>
+    <div class="col-8">
+      <div class="row mb-3" id="row1">
+        <h4> Samples </h4>
+        <div class="input-group mb-3 " >
+          <div id="samplesColumn"> not fetched</div>
+          <div class="input-group-text">
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="sampleM" name="sampleCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
+            <label class="form-check-label" for="sampleM" >Mandatory&nbsp;</label>
+          </div>
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="sampleR" name="sampleCheck" role="switch" value="recommanded" aria-label="Radio button for previous datalist">
+            <label class="form-check-label" for="sampleR">Recommended&nbsp;</label>
+          </div>
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="sampleO" name="sampleCheck" role="switch" value="optional" aria-label="Radio button for previous datalist">
+            <label class="form-check-label" for="sampleO">Optional&nbsp;</label>
+          </div>
+          </div>
+          
+        </div>
+        <div class="row" id="row1.5">
+          <div class="d-flex justify-content-center">                   
+            <button type="button" id="sTemplate" class="btn btn-primary btn-lg" onclick='checkInput("sampleCheck", 0, samplesTemplate); '  disabled>Download ENA Samples Template</button> 
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3" id="row2">
+        <h4> Raw Reads </h4>
+        <div class="input-group mb-3" >
+          <div id="rawReadsColumn"> not fetched</div>
+          <div class="input-group-text">
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="rawReadsM" name="rawReadsCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
+            <label class="form-check-label" for="rawReadsM" >Mandatory&nbsp;</label>
+          </div>
+
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="rawReadsO" name="rawReadsCheck" role="switch" value="optional" aria-label="Radio button for previous datalist">
+            <label class="form-check-label" for="rawReadsO">Optional&nbsp;</label>
+          </div>
+          </div>
+          
+        </div>
+        <div class="row" id="row2.5">
+          <div class="d-flex justify-content-center">                   
+            <button type="button" id="rrTemplate" class="btn btn-primary btn-lg" onclick='checkInput("rawReadsCheck", 1, rawReadsTemplateJSON);'  disabled>Download ENA Raw Reads Template</button> 
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3" id="row3">
+        <h4> Data Analyses </h4>
+        <div class="input-group mb-3 " >
+          <div id="dataAnalysesColumn"> not fetched</div>
+          <div class="input-group-text">
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="dataAnalysesM" name="dataAnalysesCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
+            <label class="form-check-label" for="dataAnalysesM" >Mandatory&nbsp;</label>
+          </div>
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="dataAnalysesR" name="dataAnalysesCheck" role="switch" value="recommended" aria-label="Radio button for previous datalist">
+            <label class="form-check-label" for="dataAnalysesR">Recommended&nbsp;</label>
+          </div>
+            <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="dataAnalysesO" name="dataAnalysesCheck" role="switch" value="optional" aria-label="Radio button for previous datalist">
+            <label class="form-check-label" for="dataAnalysesO">Optional&nbsp;</label>
+          </div>
+          </div>
+          
+        </div>
+        <div class="row" id="row3.5">
+          <div class="d-flex justify-content-center">                   
+            <button type="button" id="daTemplate" class="btn btn-primary btn-lg" onclick='checkInput("sampleCheck", 2, samplesTemplate);'  disabled>Download ENA Data Analyses Template</button> 
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+
+  </body>
+</html>
