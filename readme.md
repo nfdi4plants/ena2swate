@@ -56,9 +56,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ## Acknowledgements
 
-- [European Nucleotide Archive (ENA)](https://www.ebi.ac.uk/ena)
-- [SWATE (Metadata annotation tool from DataPLANT)](https://swate-alpha.nfdi4plants.org/)
-- [ARCtrl (heavy lifting tool for ARC manipulation)](https://github.com/nfdi4plants/ARCtrl/)
+- [ENA (European Nucleotide Archive)](https://www.ebi.ac.uk/ena)
+- [SWATE (Excel Add-In for annotation of experimental data and computational workflows.)](https://swate-alpha.nfdi4plants.org/)
+- [ARCtrl (Library for management of Annotated Research Contexts (ARCs) using an in-memory representation and runtime-agnostic contract systems.)](https://github.com/nfdi4plants/ARCtrl/)
 
 ## Contact
 

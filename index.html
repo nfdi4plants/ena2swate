@@ -46,6 +46,80 @@
 ]
 
 
+
+var googleJSON;
+
+function csvJSON(csv){
+
+  var lines=csv.split("\n");
+
+  var result = [];
+  var headers=lines[0].split(",");
+
+  for(var i=1;i<lines.length;i++){
+
+      var obj = {};
+      var currentline=lines[i].split(",");
+
+      for(var j=0;j<headers.length;j++){
+          obj[headers[j]] = currentline[j];
+      }
+
+      result.push(obj);
+
+  }
+
+  //return result; //JavaScript object
+  return JSON.stringify(result); //JSON
+  }
+
+async function fetchGoogleCSV(){
+    try {
+      //read .csv file on a server
+      const target = `https://docs.google.com/spreadsheets/d/e/2PACX-1vSelJd6uBG8Ri_vqoxawVbCmy4U5Lvc1vqwOFo7dgBz1_yWOuosL46aG9dZdIB7RvuCOzW5Vnr3ytck/pub?gid=82880550&single=true&output=csv`;
+
+      const res = await fetch(target, {
+      
+          method: 'get',
+          headers: {
+            
+              'content-type': 'text/csv;charset=UTF-8',
+          }
+      });
+
+      if (res.status === 200) {
+          const data = await res.text();
+          googleJSON =JSON.parse(csvJSON(data));
+          //document.getElementById("submission").disabled = false;
+
+      } else {
+          console.log(`Error code ${res.status}`);
+      }
+    } catch (err) {
+      console.log(err)
+  }
+
+}
+
+fetchGoogleCSV();
+
+function enaTerm2Ont(termName){
+  console.log("termName is: " + termName)
+  for (const [index,element] of Object.entries(googleJSON)){
+    console.log("Field Name is: " + element["Field Name"])
+    if (element["Field Name"] == termName)
+    {
+      console.log("found ontology: " + element.id)
+      return element.id;
+      
+    }else{
+      
+    }
+  }
+  console.log("did not found ontology: ")
+      return "";
+}
+
   async function fetchENAXML(ENAall ,ENAURL){
     for (const [index, url] of ENAURL.entries()){ 
       try {
