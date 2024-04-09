@@ -38,13 +38,13 @@
   <body class="d-grid gap-5" style="background: rgb(45, 62, 80, 0.2); " >
     <script>
       var spreadsheet;
-   var ENAsample, ENAsequence, ENAread, samplesChecklist, dataAnalysesChecklist ;
+   var ENAsample, ENAsequence, ENAread, samplesChecklist, dataAnalysesChecklist, checklistNo ;
      var ENAall = [ENAsample, ENAread, ENAsequence];
      const ENAURL = [`https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/xml/*?type=sample`,
   `https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/getReadFields`,
   `https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/xml/*?type=sequence`
 ]
-
+      
 
 
 var googleJSON;
@@ -218,6 +218,9 @@ function template(id1, listName){
 
   }
 
+
+
+
   var saveData = (function () {
       var a = document.createElement("a");
       document.body.appendChild(a);
@@ -233,7 +236,12 @@ function template(id1, listName){
       };
   }());
 
-  function checkInput(checkName, id1, callback){
+
+
+
+
+
+  function checkInput(checkName, id1){
     var selected = []; 
     document.querySelectorAll("input[name="+checkName+"]").forEach((ele)=> {if(ele.checked){ selected.push(ele.value)  }}  ); 
     console.log(selected);
@@ -242,7 +250,179 @@ function template(id1, listName){
       return alert("The checklist name is not selected, please select")
       }
 
-      callback(id1,selected)
+    const value = document.getElementById("checkDataList"+id1).value;
+    window.checklistNo = document.querySelector('option[name="'+id1+'"][value="'+value+'"]').id;
+    const checklists = ENAall[id1].evaluate(
+      "//CHECKLIST[@accession='"+ checklistNo+"']",
+      ENAall[id1],
+      null,
+      XPathResult.ANY_TYPE,
+      null,
+    );
+    const list1 = checklists.iterateNext();
+    var tableHTML1 = `
+      <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Term Name</th>
+              <th scope="col">Term Type</th>
+              <th scope="col">Mandatory</th>
+              <th scope="col">Ontology</th>
+              <th scope="col">Export</th>
+            </tr>
+          </thead>
+          <tbody>` ;
+    const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
+        for (const [index, element] of Object.entries(list2) ){
+          const label = element.querySelector("LABEL").innerHTML;
+          const mandatory = element.querySelector("MANDATORY").innerHTML;
+          const include = (ele)=> ele === mandatory;
+          if (selected.some(include))
+          {
+            //console.log(element.innerHTML)
+            
+            const ontId = enaTerm2Ont(label);
+            
+            tableHTML1 += `<tr>
+              <th name="LABEL" scope="row">`+label+`</th>
+              <td>
+                <select class="form-select" name="type" aria-label="characteristic or factor">
+                  <option value="characteristic" selected> Characteristic (default) </option>
+                  <option value="component">Component</option>
+                  <option value="factor">Factor</option>
+                  <option value="parameter">Parameter</option>
+                  
+                  <!--<option value="protocolType">protocolType</option>
+                  <option value="protocolDescription">protocolDescription</option>
+                  <option value="protocolUri">protocolUri</option>
+                  <option value="protocolVersion">protocolVersion</option>
+                  <option value="protocolREF">protocolREF</option>
+                  <option value="performer">performer</option>
+                  <option value="date">date</option>
+                  <option value="input">input</option>
+                  <option value="output">output</option>
+                  <option value="freeText">freeText</option>-->
+
+                </select>
+                
+                </td>
+              <td name="MANDATORY">`+mandatory+`</td>
+              <td name="ontId">`+ontId+`</td>
+              <td>
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="modalTableList`+id1+`" id="`+label+`checkbox" checked>
+                <label class="form-check-label" for="`+label+`checkbox" >
+                
+                </label>
+                </div>
+              </td>
+              </tr>`;
+
+            
+
+          }
+
+
+        }
+
+      tableHTML1 += "</tbody> </table>";
+      console.log(tableHTML1);
+      document.getElementById("modal"+id1+"body").innerHTML= tableHTML1;
+
+           
+      
+      
+      //callback(id1,selected);
+          document.getElementById("modal"+id1+"button").click();
+  }
+
+
+  function checkJSONInput(checkName, id1){
+    var selected = []; 
+    document.querySelectorAll("input[name="+checkName+"]").forEach((ele)=> {if(ele.checked){ selected.push(ele.value)  }}  ); 
+    console.log(selected);
+    if (document.getElementById("checkDataList"+id1).value == ""){
+
+      return alert("The checklist name is not selected, please select")
+      }
+
+    const value = document.getElementById("checkDataList"+id1).value;
+    window.checklistNo = document.querySelector('option[name="'+id1+'"][value="'+value+'"]').id;
+    const list1 = ENAall[id1][checklistNo];
+    var tableHTML1 = `
+      <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Term Name</th>
+              <th scope="col">Term Type</th>
+              <th scope="col">Mandatory</th>
+              <th scope="col">Ontology</th>
+              <th scope="col">Export</th>
+            </tr>
+          </thead>
+          <tbody>` ;
+    const list2 = list1.fields;
+        for (const [index, element] of Object.entries(list2) ){
+          const label = element.label;
+          const mandatory = element.mandatory? "mandatory": "optional" ;
+          const include = (ele)=> ele === mandatory;
+          if (selected.some(include))
+          {
+            //console.log(element.innerHTML)
+            
+            const ontId = enaTerm2Ont(label);
+            
+            tableHTML1 += `<tr>
+              <th name="LABEL" scope="row">`+label+`</th>
+              <td>
+                <select class="form-select" name="type" aria-label="characteristic or factor">
+                  <option value="characteristic" selected> Characteristic (default) </option>
+                  <option value="component">Component</option>
+                  <option value="factor">Factor</option>
+                  <option value="parameter">Parameter</option>
+                  
+                  <!--<option value="protocolType">protocolType</option>
+                  <option value="protocolDescription">protocolDescription</option>
+                  <option value="protocolUri">protocolUri</option>
+                  <option value="protocolVersion">protocolVersion</option>
+                  <option value="protocolREF">protocolREF</option>
+                  <option value="performer">performer</option>
+                  <option value="date">date</option>
+                  <option value="input">input</option>
+                  <option value="output">output</option>
+                  <option value="freeText">freeText</option>-->
+
+                </select>
+                
+                </td>
+              <td name="MANDATORY">`+mandatory+`</td>
+              <td name="ontId">`+ontId+`</td>
+              <td>
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="modalTableList`+id1+`" id="`+label+`checkbox" checked>
+                <label class="form-check-label" for="`+label+`checkbox" >
+                
+                </label>
+                </div>
+              </td>
+              </tr>`;
+
+            
+
+          }
+
+
+        }
+
+      tableHTML1 += "</tbody> </table>";
+      console.log(tableHTML1);
+      document.getElementById("modal"+id1+"body").innerHTML= tableHTML1;
+
+           
+      
+      
+      //callback(id1,selected);
+          document.getElementById("modal"+id1+"button").click();
   }
    </script>
    <script src="js/main.js"></script>
@@ -315,7 +495,7 @@ function template(id1, listName){
         </div>
         <div class="row" id="row1.5">
           <div class="d-flex justify-content-center">                   
-            <button type="button" id="sTemplate" class="btn btn-primary btn-lg" onclick='checkInput("sampleCheck", 0, samplesTemplate); '  disabled>Download ENA Samples Template</button> 
+            <button type="button" id="sTemplate" class="btn btn-primary btn-lg" onclick='checkInput("sampleCheck", 0); '  disabled>Download ENA Samples Template</button> 
           </div>
         </div>
       </div>
@@ -338,7 +518,7 @@ function template(id1, listName){
         </div>
         <div class="row" id="row2.5">
           <div class="d-flex justify-content-center">                   
-            <button type="button" id="rrTemplate" class="btn btn-primary btn-lg" onclick='checkInput("rawReadsCheck", 1, rawReadsTemplateJSON);'  disabled>Download ENA Raw Reads Template</button> 
+            <button type="button" id="rrTemplate" class="btn btn-primary btn-lg" onclick='checkJSONInput("rawReadsCheck", 1);'  disabled>Download ENA Raw Reads Template</button> 
           </div>
         </div>
       </div>
@@ -364,7 +544,7 @@ function template(id1, listName){
         </div>
         <div class="row" id="row3.5">
           <div class="d-flex justify-content-center">                   
-            <button type="button" id="daTemplate" class="btn btn-primary btn-lg" onclick='checkInput("sampleCheck", 2, samplesTemplate);'  disabled>Download ENA Data Analyses Template</button> 
+            <button type="button" id="daTemplate" class="btn btn-primary btn-lg" onclick='checkInput("sampleCheck", 2);'  disabled>Download ENA Data Analyses Template</button> 
           </div>
         </div>
       </div>
@@ -373,5 +553,89 @@ function template(id1, listName){
   </div>
 
 
+<!-- Button trigger Samples modal -->
+<button type="button" class="btn btn-primary d-none" id="modal0button" data-bs-toggle="modal" data-bs-target="#modal0">
+  Launch demo modal
+</button>
+
+<!--Samples Modal -->
+<div class="modal modal-xl fade" id="modal0" tabindex="-1" aria-labelledby="modal0Label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="Modal0Label">Select Terms From the Checklist</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal0body">
+
+
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="samplesTemplate(0)">Download SWATE Template</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Button trigger Raw Reads modal -->
+  <button type="button" class="btn btn-primary d-none" id="modal1button" data-bs-toggle="modal" data-bs-target="#modal1">
+    Data Analyses
+  </button>
+  
+  <!-- Data Raw Reads Modal -->
+  <div class="modal modal-xl fade" id="modal1" tabindex="-1" aria-labelledby="modal1Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="Modal1Label">Select Terms From the Checklist</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal1body">
+  
+  
+  
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="samplesTemplate(1)">Download SWATE Template</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </body>
+</html>
+
+
+
+  <!-- Button trigger Data Analyses modal -->
+  <button type="button" class="btn btn-primary d-none" id="modal2button" data-bs-toggle="modal" data-bs-target="#modal2">
+    Data Analyses
+  </button>
+  
+  <!-- Data Analyses Modal -->
+  <div class="modal modal-xl fade" id="modal2" tabindex="-1" aria-labelledby="modal2Label" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="Modal2Label">Select Terms From the Checklist</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal2body">
+  
+  
+  
+  
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="samplesTemplate(2)">Download SWATE Template</button>
+        </div>
+      </div>
+    </div>
+  </div>
   </body>
 </html>
