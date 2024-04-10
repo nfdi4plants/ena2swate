@@ -470,8 +470,7 @@ function template(id1, listName){
   <div class="container text-center ">
   <div class="row justify-content-center">
     <h2>Generate SWATE template from ENA checklists </h2>
-    <h6>ENA has three checklists, namely samples, raw reads and data analyses. 
-      By select or search the checklist, a Swate template can be created. </h6>
+    <h6>ENA has three checklist types, namely samples, raw reads and data analyses. By search and selecting a checklist, a Swate template can be created. </h6>
     <div class="col-8">
       <div class="row mb-3" id="row1">
         <h4> Samples </h4>
@@ -480,10 +479,10 @@ function template(id1, listName){
           <div class="input-group-text">
             <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="sampleM" name="sampleCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
-            <label class="form-check-label" for="sampleM" >Mandatory&nbsp;</label>
+            <label class="form-check-label" for="sampleM" >Requirement&nbsp;</label>
           </div>
             <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="sampleR" name="sampleCheck" role="switch" value="recommanded" aria-label="Radio button for previous datalist">
+            <input class="form-check-input" type="checkbox" id="sampleR" name="sampleCheck" role="switch" value="recommended" aria-label="Radio button for previous datalist">
             <label class="form-check-label" for="sampleR">Recommended&nbsp;</label>
           </div>
             <div class="form-check form-switch">
@@ -506,7 +505,7 @@ function template(id1, listName){
           <div class="input-group-text">
             <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="rawReadsM" name="rawReadsCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
-            <label class="form-check-label" for="rawReadsM" >Mandatory&nbsp;</label>
+            <label class="form-check-label" for="rawReadsM" >Requirement&nbsp;</label>
           </div>
 
             <div class="form-check form-switch">
@@ -529,12 +528,9 @@ function template(id1, listName){
           <div class="input-group-text">
             <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="dataAnalysesM" name="dataAnalysesCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
-            <label class="form-check-label" for="dataAnalysesM" >Mandatory&nbsp;</label>
+            <label class="form-check-label" for="dataAnalysesM" >Requirement&nbsp;</label>
           </div>
-            <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="dataAnalysesR" name="dataAnalysesCheck" role="switch" value="recommended" aria-label="Radio button for previous datalist">
-            <label class="form-check-label" for="dataAnalysesR">Recommended&nbsp;</label>
-          </div>
+
             <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="dataAnalysesO" name="dataAnalysesCheck" role="switch" value="optional" aria-label="Radio button for previous datalist">
             <label class="form-check-label" for="dataAnalysesO">Optional&nbsp;</label>
