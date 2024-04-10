@@ -244,7 +244,7 @@ function template(id1, listName){
   function checkInput(checkName, id1){
     var selected = []; 
     document.querySelectorAll("input[name="+checkName+"]").forEach((ele)=> {if(ele.checked){ selected.push(ele.value)  }}  ); 
-    console.log(selected);
+    //console.log(selected);
     if (document.getElementById("checkDataList"+id1).value == ""){
 
       return alert("The checklist name is not selected, please select")
@@ -326,7 +326,7 @@ function template(id1, listName){
         }
 
       tableHTML1 += "</tbody> </table>";
-      console.log(tableHTML1);
+      //console.log(tableHTML1);
       document.getElementById("modal"+id1+"body").innerHTML= tableHTML1;
 
            
@@ -335,12 +335,85 @@ function template(id1, listName){
       //callback(id1,selected);
           document.getElementById("modal"+id1+"button").click();
   }
+  function listJSONFields(){
+    var uniqueList = {}
+    var csv = "";
+    for (const [index1, element1] of Object.entries( ENAall[1])){
+        //console.log(element1);
+        for (const [index2, element2] of Object.entries( element1.fields)){
+            try {
+                uniqueList[element2.name];
+                if (uniqueList[element2.name][1] == element2.description){
+                  
+                }else {
+                    console.log("term exists but the descriptions are not the same. previous description is: "+uniqueList[element2.name][1]+"\n current is: "+ element2.description)
+                }
+                
+            } catch (error) {
+                var newRow = [element2.label, element2.description, element2.mandatory, element2.label ];
+                uniqueList[element2.name] = newRow;
+                console.log("added dict: "+ uniqueList[element2.name]);
+                csv += newRow[0]+"\t"+newRow[1]+"\t"+newRow[2]+"\n";
+            }
+            
+        }    
+    }
+    window.location.href = "data:text/tab-separated-values," + encodeURIComponent(csv);
+    return csv;
+  }
 
+
+  function listXMLFields(id1){
+    var uniqueList = {}
+    var tsv = "";
+    const checklists = ENAall[id1].evaluate(
+      "//CHECKLIST",
+      ENAall[id1],
+      null,
+      XPathResult.ANY_TYPE,
+      null,
+    );
+    
+    var list1= checklists.iterateNext() ;
+    while (list1 != null )
+    {       
+      const checkid = list1.getAttribute("accession");
+      const name = list1.getElementsByTagName('DESCRIPTOR')[0].getElementsByTagName('NAME')[0].innerHTML;
+      const allField = Array.from(list1.querySelectorAll("FIELD"));
+
+        for (const [index2, element2] of Object.entries( allField)){
+            const name =element2.querySelector("LABEL").innerHTML;
+            const label =element2.querySelector("LABEL").innerHTML;
+            const mandatory =element2.querySelector("MANDATORY").innerHTML;
+            const description =element2.querySelector("DESCRIPTION").innerHTML
+            try {
+                
+                uniqueList[name];
+                if (uniqueList[name][1] == description){
+                  
+                }else {
+                    console.log("term exists but the descriptions are not the same. previous description is: "+uniqueList[name][1]+"\n current is: "+ description)
+                }
+                
+            } catch (error) {
+
+                var newRow = [label, description, mandatory, id1+":"+checkid];
+                uniqueList[name] = newRow;
+                console.log("added dict: "+ uniqueList[name]);
+                tsv += newRow[0]+"\t"+newRow[1]+"\t"+newRow[2]+"\t"+newRow[3]+"\n";
+            }
+            
+        }    
+        list1 = checklists.iterateNext();
+    }
+    window.location.href = "data:text/tab-separated-values," + encodeURIComponent(tsv);
+    return tsv;
+  }
 
   function checkJSONInput(checkName, id1){
     var selected = []; 
     document.querySelectorAll("input[name="+checkName+"]").forEach((ele)=> {if(ele.checked){ selected.push(ele.value)  }}  ); 
-    console.log(selected);
+    //console.log(selected);
     if (document.getElementById("checkDataList"+id1).value == ""){
 
       return alert("The checklist name is not selected, please select")
