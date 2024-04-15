@@ -35,7 +35,7 @@
         }
 		</style>
   </head>
-  <body class="d-grid gap-5" style="background: rgb(45, 62, 80, 0.2); " >
+  <body class="d-grid gap-3" style="background: rgb(45, 62, 80, 0.2); " >
     <script>
       var spreadsheet;
    var ENAsample, ENAsequence, ENAread, samplesChecklist, dataAnalysesChecklist, checklistNo ;
@@ -266,7 +266,7 @@ function template(id1, listName){
             <tr>
               <th scope="col">Term Name</th>
               <th scope="col">Term Type</th>
-              <th scope="col">Mandatory</th>
+              <th scope="col">Requirement</th>
               <th scope="col">Ontology</th>
               <th scope="col">Export</th>
             </tr>
@@ -346,13 +346,13 @@ function template(id1, listName){
                 if (uniqueList[element2.name][1] == element2.description){
                   
                 }else {
-                    console.log("term exists but the descriptions are not the same. previous description is: "+uniqueList[element2.name][1]+"\n current is: "+ element2.description)
+                    console.log("term ---"+element2.label +" ---exists but the descriptions are not the same. previous description is: "+uniqueList[element2.name][1]+"\n current is: "+ element2.description)
                 }
                 
             } catch (error) {
                 var newRow = [element2.label, element2.description, element2.mandatory, element2.label ];
                 uniqueList[element2.name] = newRow;
-                console.log("added dict: "+ uniqueList[element2.name]);
+                //console.log("added dict: "+ uniqueList[element2.name]);
                 csv += newRow[0]+"\t"+newRow[1]+"\t"+newRow[2]+"\n";
             }
             
@@ -366,6 +366,7 @@ function template(id1, listName){
   function listXMLFields(id1){
     var uniqueList = {}
     var tsv = "";
+    var tsvCompare = "";
     const checklists = ENAall[id1].evaluate(
       "//CHECKLIST",
       ENAall[id1],
@@ -392,14 +393,15 @@ function template(id1, listName){
                 if (uniqueList[name][1] == description){
                   
                 }else {
-                    console.log("term exists but the descriptions are not the same. previous description is: "+uniqueList[name][1]+"\n current is: "+ description)
-                }
+                    console.log("term in ---"+label +" --- exists but the descriptions are not the same. previous description is: "+uniqueList[name][1]+"\n current is: "+ description)
+                    tsvCompare += uniqueList[name][0]+"\t"+uniqueList[name][3]+"\t"+uniqueList[name][1]+"\t"+checkid+ "\t" + description+"\n";
+                  }
                 
             } catch (error) {
 
                 var newRow = [label, description, mandatory, id1+":"+checkid];
                 uniqueList[name] = newRow;
-                console.log("added dict: "+ uniqueList[name]);
+                //console.log("added dict: "+ uniqueList[name]);
                 tsv += newRow[0]+"\t"+newRow[1]+"\t"+newRow[2]+"\t"+newRow[3]+"\n";
             }
             
@@ -407,6 +409,7 @@ function template(id1, listName){
         list1 = checklists.iterateNext();
     }
     window.location.href = "data:text/tab-separated-values," + encodeURIComponent(tsv);
+    window.location.href = "data:text/tab-separated-values," + encodeURIComponent(tsvCompare);
     return tsv;
   }
 
@@ -545,14 +548,14 @@ function template(id1, listName){
     <h2>Generate SWATE template from ENA checklists </h2>
     <h6>ENA has three checklist types, namely samples, raw reads and data analyses. By search and selecting a checklist, a Swate template can be created. </h6>
     <div class="col-8">
-      <div class="row mb-3" id="row1">
+      <div class="row mb-5" id="row1">
         <h4> Samples </h4>
         <div class="input-group mb-3 " >
           <div id="samplesColumn"> not fetched</div>
           <div class="input-group-text">
             <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="sampleM" name="sampleCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
-            <label class="form-check-label" for="sampleM" >Requirement&nbsp;</label>
+            <label class="form-check-label" for="sampleM" >Mandatory&nbsp;</label>
           </div>
             <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="sampleR" name="sampleCheck" role="switch" value="recommended" aria-label="Radio button for previous datalist">
@@ -571,14 +574,14 @@ function template(id1, listName){
           </div>
         </div>
       </div>
-      <div class="row mb-3" id="row2">
+      <div class="row mb-5" id="row2">
         <h4> Raw Reads </h4>
         <div class="input-group mb-3" >
           <div id="rawReadsColumn"> not fetched</div>
           <div class="input-group-text">
             <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="rawReadsM" name="rawReadsCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
-            <label class="form-check-label" for="rawReadsM" >Requirement&nbsp;</label>
+            <label class="form-check-label" for="rawReadsM" >Mandatory&nbsp;</label>
           </div>
 
             <div class="form-check form-switch">
@@ -594,14 +597,14 @@ function template(id1, listName){
           </div>
         </div>
       </div>
-      <div class="row mb-3" id="row3">
+      <div class="row mb-5" id="row3">
         <h4> Data Analyses </h4>
         <div class="input-group mb-3 " >
           <div id="dataAnalysesColumn"> not fetched</div>
           <div class="input-group-text">
             <div class="form-check form-switch">
             <input class="form-check-input" type="checkbox" id="dataAnalysesM" name="dataAnalysesCheck" role="switch" value="mandatory" aria-label="Radio button for previous datalist" checked>
-            <label class="form-check-label" for="dataAnalysesM" >Requirement&nbsp;</label>
+            <label class="form-check-label" for="dataAnalysesM" >Mandatory&nbsp;</label>
           </div>
 
             <div class="form-check form-switch">
