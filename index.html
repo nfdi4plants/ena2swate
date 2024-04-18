@@ -45,7 +45,11 @@
   `https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/xml/*?type=sequence`
 ]
       
+function loadTemplate(){
+document.getElementById("UploadFiles_MainWindowInit")
 
+
+}
 
 var googleJSON;
 
@@ -647,10 +651,42 @@ function template(id1, listName){
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" onclick="samplesTemplate(0)">Download SWATE Template</button>
+        <button type="button" class="btn btn-primary" onclick="samplesTemplate(0)" id="swateModalbutton" data-bs-toggle="modal" data-bs-target="#swateModal">
+          Launch template in swate
+        </button>
       </div>
     </div>
   </div>
 </div>
+
+
+<!-- Button trigger Samples modal -->
+
+
+<!--Samples Modal -->
+<div class="modal modal-xl fade" id="swateModal" tabindex="-1" data-backdrop="static" aria-labelledby="swateModalLabel" aria-hidden="true" style="height:1080px">
+  <div class="modal-dialog " style="height:90vh">
+  <div class="modal-dialog " style="height:90vh">
+    <div class="modal-content" >
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="Modal0Label">Swate-alpha</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="modal0body">
+        <iframe src="https://swate-alpha.nfdi4plants.org/" onload="loadTemplate(this)" width="100%" height="380" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
+                        allowtransparency="true"></iframe>
+
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary d-none" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary d-none" onclick="samplesTemplate(0)">Download SWATE Template</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <!-- Button trigger Raw Reads modal -->
   <button type="button" class="btn btn-primary d-none" id="modal1button" data-bs-toggle="modal" data-bs-target="#modal1">
