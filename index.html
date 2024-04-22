@@ -38,7 +38,7 @@
   <body class="d-grid gap-3" style="background: rgb(45, 62, 80, 0.2); " >
     <script>
       var spreadsheet;
-   var ENAsample, ENAsequence, ENAread, samplesChecklist, dataAnalysesChecklist, checklistNo ;
+   var ENAsample, ENAsequence, ENAread, samplesChecklist, dataAnalysesChecklist, checklistNo, spreadsheet ;
      var ENAall = [ENAsample, ENAread, ENAsequence];
      const ENAURL = [`https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/xml/*?type=sample`,
   `https://wwwdev.ebi.ac.uk/ena/submit/report/checklists/getReadFields`,
@@ -650,8 +650,8 @@ function template(id1, listName){
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" onclick="samplesTemplate(0)">Download SWATE Template</button>
-        <button type="button" class="btn btn-primary" onclick="samplesTemplate(0)" id="swateModalbutton" data-bs-toggle="modal" data-bs-target="#swateModal">
+        <button type="button" class="btn btn-primary" onclick="downloadTemplate( 0,samplesTemplate)">Download SWATE Template</button>
+        <button type="button" class="btn btn-primary" onclick="swateLoadTemplate(0,samplesTemplate)" id="swateModalbutton" data-bs-toggle="modal" data-bs-target="#swateModal">
           Launch template in swate
         </button>
       </div>
@@ -672,7 +672,7 @@ function template(id1, listName){
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="modal0body"  style="height:90vh">
-        <iframe src="https://swate-alpha.nfdi4plants.org/" onload="loadTemplate(this)" width="100%" height="100%" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
+        <iframe src="https://swate-alpha.nfdi4plants.org/" id="swateFrame" onload="loadTemplate(this)" width="100%" height="100%" frameborder="0" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation"
                         allowtransparency="true"></iframe>
 
 
