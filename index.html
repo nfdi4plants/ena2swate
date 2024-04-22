@@ -495,7 +495,7 @@ function template(id1, listName){
         }
 
       tableHTML1 += "</tbody> </table>";
-      console.log(tableHTML1);
+      //console.log(tableHTML1);
       document.getElementById("modal"+id1+"body").innerHTML= tableHTML1;
 
            
@@ -686,7 +686,7 @@ function template(id1, listName){
     </div>
   </div>
 </div>
-
+</div>
 
   <!-- Button trigger Raw Reads modal -->
   <button type="button" class="btn btn-primary d-none" id="modal1button" data-bs-toggle="modal" data-bs-target="#modal1">
@@ -710,6 +710,7 @@ function template(id1, listName){
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" onclick="samplesTemplate(1)">Download SWATE Template</button>
+          <button type="button" class="btn btn-primary" onclick="samplesTemplate(0)" id="swateModalbutton" data-bs-toggle="modal" data-bs-target="#swateModal"></button>
         </div>
       </div>
     </div>
@@ -741,6 +742,7 @@ function template(id1, listName){
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" onclick="samplesTemplate(2)">Download SWATE Template</button>
+          <button type="button" class="btn btn-primary" onclick="samplesTemplate(0)" id="swateModalbutton" data-bs-toggle="modal" data-bs-target="#swateModal"></button>
         </div>
       </div>
     </div>
