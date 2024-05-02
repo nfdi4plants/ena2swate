@@ -124,7 +124,7 @@ function enaTerm2Ont(termName){
       return "";
 }
 
-  async function fetchENAXML(ENAall ,ENAURL){
+  async function fetchENAXML(ENAall, ENAURL){
     for (const [index, url] of ENAURL.entries()){ 
       try {
         //read xml and json from ENA server
@@ -163,7 +163,7 @@ function enaTerm2Ont(termName){
       document.getElementById("samplesColumn").outerHTML= template(0, "samples");
       document.getElementById("sTemplate").disabled = false;
 
-      document.getElementById("rawReadsColumn").outerHTML= templateJSON(1 ,"raw reads");
+      document.getElementById("rawReadsColumn").outerHTML= templateJSON(1, "raw reads");
       document.getElementById("rrTemplate").disabled = false;
 
       document.getElementById("dataAnalysesColumn").outerHTML= template(2, "data analyses");
@@ -171,6 +171,124 @@ function enaTerm2Ont(termName){
 
     })
     .catch(err => {console.log("fetch of ena xml failed, error is ", err)})
+
+
+function ena2csv(id1){
+  var linkList = document.createElement('div');
+ 
+  const checklists1 = ENAall[id1].evaluate(
+      "//CHECKLIST",
+      ENAall[id1],
+      null,
+      XPathResult.ANY_TYPE,
+      null,
+    );
+      
+      var list1 = checklists1.iterateNext();
+      var number = 0;
+      while (list1 != undefined){
+      var checklistNo = list1.getAttribute("accession");
+      number +=1;
+      console.log("number "+ number +"accession is "+ checklistNo);
+      const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
+      var text = "label\tmandatory2\tunits\tfieldType\tfieldValidate\n";
+        for (const [index, element] of Object.entries(list2) ){
+          const label = element.querySelector("LABEL").innerHTML;
+          const mandatory = element.querySelector("MANDATORY").innerHTML;
+          var units;
+          try{
+             units = element.querySelector("UNITS").querySelector("UNIT").innerHTML;
+          }catch(e){units = "no unit"; }
+          var fieldType
+          try{
+          fieldType = element.querySelector("FIELD_TYPE").childNodes[1].nodeName;
+          }catch(e){fieldType = " "; console.log("no field type", e)}
+          var fieldValidate;
+          try{
+          fieldValidate = element.querySelector("FIELD_TYPE").innerHTML.toString();
+          }catch(e){fieldValidate = " "}
+        //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
+        text += label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
+        
+
+
+    }
+        var element2 = document.createElement('a');
+        element2.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element2.setAttribute('download', checklistNo+"_validation_info.tsv" );
+
+        element2.style.display = 'none';
+        document.body.appendChild(element2);
+      
+        //element2.click();
+        linkList.appendChild(element2);
+        //console.log(linkList);
+        list1 = checklists1.iterateNext();
+  }
+  
+  const listArray = Array.prototype.slice.call(linkList.querySelectorAll("a"));
+  //console.log(listArray);
+  //listArray[0].click();
+  for (const [ id, link] of Object.entries(listArray)){
+    //console.log("id "+id+ " "+link)
+    setTimeout(function() {
+      link.click();
+    }, 500+500* parseInt(id));
+
+  }
+  
+    
+}
+
+
+function enaJSON2csv(id1=1){
+  var linkList = document.createElement('div');
+ 
+  const checklists1 = ENAall[id1]
+      
+    for (const lists of checklists1){
+      var text = "label\tmandatory\tvalueChoice\n";
+      var listName = lists.name;
+      console.log(listName);
+      for (const list1 of lists.fields) 
+      {
+        const label = list1.name;
+        const mandatory = list1.mandatory;
+        const valueChoice = list1.value_choice;
+
+        //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
+        text += label+"\t"+ mandatory+"\t"+valueChoice+"\n"
+        //console.log(text);
+      }
+      var element2 = document.createElement('a');
+        element2.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element2.setAttribute('download', listName+"_validation_info.tsv" );
+
+        element2.style.display = 'none';
+        document.body.appendChild(element2);
+      
+        //element2.click();
+        linkList.appendChild(element2);
+        console.log(linkList);
+      }
+      const listArray = Array.prototype.slice.call(linkList.querySelectorAll("a"));
+  console.log(listArray);
+  //listArray[0].click();
+  for (const [ id, link] of Object.entries(listArray)){
+    console.log("id "+id+ " "+link);
+    setTimeout(function() {
+      link.click();
+    }, 500+500* parseInt(id));
+
+}
+       
+    }
+
+  
+    
+
+
+
 
 // -------- 1. Create and manipulate object in datamodel ----------
 function template(id1, listName){
@@ -239,7 +357,6 @@ function template(id1, listName){
           window.URL.revokeObjectURL(url);
       };
   }());
-
 
 
 
@@ -322,20 +439,13 @@ function template(id1, listName){
               </td>
               </tr>`;
 
-            
-
           }
-
 
         }
 
       tableHTML1 += "</tbody> </table>";
       //console.log(tableHTML1);
       document.getElementById("modal"+id1+"body").innerHTML= tableHTML1;
-
-           
-      
-      
       //callback(id1,selected);
           document.getElementById("modal"+id1+"button").click();
   }
@@ -412,8 +522,9 @@ function template(id1, listName){
         }    
         list1 = checklists.iterateNext();
     }
+    var link = document.createElement('a');
     window.location.href = "data:text/tab-separated-values," + encodeURIComponent(tsv);
-    window.location.href = "data:text/tab-separated-values," + encodeURIComponent(tsvCompare);
+    //window.location.href = "data:text/tab-separated-values," + encodeURIComponent(tsvCompare);
     return tsv;
   }
 
