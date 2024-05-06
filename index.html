@@ -107,13 +107,21 @@ async function fetchGoogleCSV(){
 
 fetchGoogleCSV();
 
-function enaTerm2Ont(termName){
-  console.log("termName is: " + termName)
+function enaTerm2Ont(termName, id1="1" ,listId="all" ){
+  //console.log("termName is: " + termName)
   for (const [index,element] of Object.entries(googleJSON)){
-    console.log("Field Name is: " + element["Field Name"])
-    if (element["Field Name"] == termName)
+    //console.log("Field Name is: " + element["Field Name"]);
+    if ((termName=="5\'_PARTIAL")||(termName=="3\'_PARTIAL") ){
+      
+      var condition = (element["Field Name"] == termName)&&((element["Checklist"] == id1+":"+listId) );
+    } else {
+      var condition = (element["Field Name"] == termName) ;
+    }
+
+
+    if (condition)
     {
-      console.log("found ontology: " + element.id)
+      //console.log("found 5\'_PARTIAL ontology: " +termName+ element.id);
       return element.id;
       
     }else{
@@ -310,7 +318,7 @@ function template(id1, listName){
       const checkid = list1.getAttribute("accession");
       const name = list1.getElementsByTagName('DESCRIPTOR')[0].getElementsByTagName('NAME')[0].innerHTML;
       //console.log(name);
-      HTMLtext +=   `<option name="`+id1+`" id="`+checkid +`" value="`+name+`" >` ;
+      HTMLtext +=   `<option name="`+id1+`" id="`+checkid +`" value="`+checkid+" "+name+`" >` ;
       list1 = checklists.iterateNext();
       
     }
@@ -359,9 +367,6 @@ function template(id1, listName){
   }());
 
 
-
-
-
   function checkInput(checkName, id1){
     var selected = []; 
     document.querySelectorAll("input[name="+checkName+"]").forEach((ele)=> {if(ele.checked){ selected.push(ele.value)  }}  ); 
@@ -402,7 +407,7 @@ function template(id1, listName){
           {
             //console.log(element.innerHTML)
             
-            const ontId = enaTerm2Ont(label);
+            const ontId = enaTerm2Ont(label, id1, checklistNo);
             
             tableHTML1 += `<tr>
               <th name="LABEL" scope="row">`+label+`</th>
