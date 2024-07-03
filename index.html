@@ -47,10 +47,7 @@
       
 function loadTemplate(){
 document.getElementById("UploadFiles_MainWindowInit")
-
-
 }
-
 var googleJSON;
 
 function csvJSON(csv){
@@ -181,6 +178,117 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
     .catch(err => {console.log("fetch of ena xml failed, error is ", err)})
 
 
+
+  function ena2ont(id1, checklistNr){
+  var linkList = document.createElement('div');
+ 
+  const checklists1 = ENAall[id1].evaluate(
+      "//CHECKLIST",
+      ENAall[id1],
+      null,
+      XPathResult.ANY_TYPE,
+      null,
+    );
+      
+      var list1 = checklists1.iterateNext();
+      var number = 0;
+      let header =`
+      format-version: 1.4
+      data-version: 0.1
+      date: 03:07:2024 12:00
+      saved-by: xiaoranzhou
+      auto-generated-by: ena2ont
+      subsetdef: sample "CHECKLIST SET for samples"
+      subsetdef: rawread "CHECKLIST SET for rawreads"
+      subsetdef: sample "CHECKLIST SET for sequences"
+      treat-xrefs-as-equivalent: MIAPPE
+      treat-xrefs-as-equivalent: NCBITaxon
+      treat-xrefs-as-equivalent: NCIT
+      treat-xrefs-as-equivalent: NFDI4PSO
+      remark: coverage: ENA checkilist definition
+      remark: creator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
+      remark: curator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
+      ontology: enacl
+      `;
+
+      
+
+      while ((list1 != undefined)){
+        var checklistNo = list1.getAttribute("accession");
+        console.log("number "+ checklistNr +" accession is "+ checklistNo);
+      if (checklistNr == checklistNo){
+      number +=1;
+      let Term1 =`
+      [Term]
+      id: ENACL:0`+checklistNo.slice(2)+`
+      name: `+checklistNo+`
+      def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
+      `
+      const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
+      var text = header + Term1;
+        for (const [index, element] of Object.entries(list2) ){
+          const label = element.querySelector("LABEL").innerHTML;
+          const description = element.querySelector("DESCRIPTION").innerHTML;
+          const mandatory = element.querySelector("MANDATORY").innerHTML;
+          var units;
+          try{
+             units = element.querySelector("UNITS").querySelector("UNIT").innerHTML;
+          }catch(e){units = "no unit"; }
+          var fieldType
+          try{
+          fieldType = element.querySelector("FIELD_TYPE").childNodes[1].nodeName;
+          }catch(e){fieldType = " "; console.log("no field type", e)}
+          var fieldValidate;
+          try{
+          fieldValidate = element.querySelector("FIELD_TYPE").innerHTML.toString();
+          }catch(e){fieldValidate = " "}
+        //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
+        let ontid = "ENACL:" + (100+parseInt(number)).toString()+ (1000+parseInt(index)).toString();
+        text += `
+      [Term]
+      id: `+ontid+`
+      name: `+label+`
+      def: " `+description+`"
+      subset: samples
+      comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
+        
+       // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
+        
+
+
+      }
+        var element2 = document.createElement('a');
+        element2.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element2.setAttribute('download', checklistNo+"_validation_info.obo" );
+
+        element2.style.display = 'none';
+        document.body.appendChild(element2);
+      
+        //element2.click();
+        linkList.appendChild(element2);
+        //console.log(linkList);
+      }
+        list1 = checklists1.iterateNext();
+      
+  }
+  
+  const listArray = Array.prototype.slice.call(linkList.querySelectorAll("a"));
+  //console.log(listArray);
+  //listArray[0].click();
+  for (const [ id, link] of Object.entries(listArray)){
+    //console.log("id "+id+ " "+link)
+    setTimeout(function() {
+      link.click();
+    }, 500+500* parseInt(id));
+
+  }
+  
+    
+}
+
+
+
+    
 function ena2csv(id1){
   var linkList = document.createElement('div');
  
