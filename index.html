@@ -219,10 +219,10 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
       if (checklistNr == checklistNo){
       number +=1;
       let Term1 =`
-      [Term]
-      id: ENACL:0`+checklistNo.slice(2)+`
-      name: `+checklistNo+`
-      def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
+[Term]
+id: ENACL:0`+checklistNo.slice(2)+`
+name: `+checklistNo+`
+def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
       `
       const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
       var text = header + Term1;
@@ -245,12 +245,12 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
         //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
         let ontid = "ENACL:" + (100+parseInt(number)).toString()+ (1000+parseInt(index)).toString();
         text += `
-      [Term]
-      id: `+ontid+`
-      name: `+label+`
-      def: " `+description+`"
-      subset: samples
-      comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
+[Term]
+id: `+ontid+`
+name: `+label+`
+def: " `+description.replaceAll('"','\\"')+`"
+subset: samples
+      comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+"\n"
         
        // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
         
