@@ -205,9 +205,10 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
       treat-xrefs-as-equivalent: NCBITaxon
       treat-xrefs-as-equivalent: NCIT
       treat-xrefs-as-equivalent: NFDI4PSO
-      remark: coverage: ENA checkilist definition
-      remark: creator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
-      remark: curator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
+      !remark: coverage: ENA checkilist definition
+      !remark: creator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
+      !remark: curator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
+      !remark: first tree numbers of the IDs are checklsit numbers, and last 4 numbers are the term ids
       ontology: enacl
       `;
 
@@ -223,6 +224,20 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
 id: ENACL:0`+checklistNo.slice(2)+`
 name: `+checklistNo+`
 def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
+      
+[Term]
+id: ENACL:1000001
+name: Mandatory
+def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
+      
+[Term]
+id: ENACL:1000002
+name: Recommended
+def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
+[Term]
+id: ENACL:1000003
+name: Optional
+def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
       `
       const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
       var text = header + Term1;
@@ -231,6 +246,7 @@ def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
           const description = element.querySelector("DESCRIPTION").innerHTML;
           const mandatory = element.querySelector("MANDATORY").innerHTML;
           var units;
+          const ontId = enaTerm2Ont(label, id1, checklistNo);
           try{
              units = element.querySelector("UNITS").querySelector("UNIT").innerHTML;
           }catch(e){units = "no unit"; }
@@ -249,8 +265,12 @@ def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
 id: `+ontid+`
 name: `+label+`
 def: " `+description.replaceAll('"','\\"')+`"
+xref: `+ ontId+`
+comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+"\n"+`
 subset: samples
-      comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+"\n"
+
+
+`
         
        // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
         
@@ -746,8 +766,11 @@ function template(id1, listName){
             <a id="metadata1" class="dropdown-item" target=”_blank” href="https://github.com/xiaoranzhou/ena2swate">github source code</a>
           </li>
           <li>
-            <a id="Ontology" class="dropdown-item" target=”_blank” href="https://docs.google.com/spreadsheets/d/1h6nOgM0NHYJFwNEbiKgqNIbHF1UE2NoEFw1SqVD29Yw">Ontology Mapping</a>
-          </li>        
+            <a id="Ontology" class="dropdown-item d-none" target=”_blank” href="https://docs.google.com/spreadsheets/d/1h6nOgM0NHYJFwNEbiKgqNIbHF1UE2NoEFw1SqVD29Yw">Ontology Mapping</a>
+          </li>  
+          <li>
+            <a id="obo" class="dropdown-item" target=”_blank” onclick="ena2ont(0, document.getElementById('checkDataList0').value.split(' ')[0])" >download obo</a>
+          </li>         
         </ul>
       </div>
 
@@ -762,7 +785,8 @@ function template(id1, listName){
             <a id="metadata2" class="dropdown-item" target=”_blank” href="https://github.com/xiaoranzhou/ena2swate">github source code</a>
           </li>
           <li>
-            <a id="Ontology" class="dropdown-item" target=”_blank” href="https://docs.google.com/spreadsheets/d/1h6nOgM0NHYJFwNEbiKgqNIbHF1UE2NoEFw1SqVD29Yw">Ontology Mapping</a>
+            <a id="obo" class="dropdown-item" target=”_blank” onclick="ena2ont(0, document.getElementById('checkDataList0').value.split(' ')[0])" >download obo</a>
+
           </li>
                           
         </ul>
