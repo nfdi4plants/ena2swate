@@ -179,7 +179,8 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
 
 
 
-  function ena2ont(id1, checklistNr){
+  function ena2ont(id1= 0, checklistNr="ERC000037"){
+  checklistNr=  checklistNr==""?  "ERC000037":checklistNr; 
   var linkList = document.createElement('div');
  
   const checklists1 = ENAall[id1].evaluate(
@@ -212,7 +213,11 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
       ontology: enacl
       `;
 
-      
+      let mandatoryDict = {
+        "mandatory" : "ENACL:1000001",
+        "recommended" : "ENACL:1000002",
+        "optional" : "ENACL:1000003"
+      }
 
       while ((list1 != undefined)){
         var checklistNo = list1.getAttribute("accession");
@@ -225,19 +230,18 @@ id: ENACL:0`+checklistNo.slice(2)+`
 name: `+checklistNo+`
 def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
       
-[Term]
+[Typedef]
 id: ENACL:1000001
 name: Mandatory
-def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
-      
-[Term]
+def: " Must exist in the metadata. The validation will fail if the term or an Xref term does not exist."
+[Typedef]
 id: ENACL:1000002
 name: Recommended
-def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
-[Term]
+def: " Recommended to be in the metadata. The validation will give warnings if the term or an Xref term does not exist."
+[Typedef]
 id: ENACL:1000003
 name: Optional
-def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
+def: " Optional in the metadata. The validation will only log the information, if the term or an Xref term does not exist."
       `
       const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
       var text = header + Term1;
@@ -260,17 +264,16 @@ def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
           }catch(e){fieldValidate = " "}
         //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
         let ontid = "ENACL:" + (100+parseInt(number)).toString()+ (1000+parseInt(index)).toString();
+        let xrefOnt = ontId ? `
+xref: `+ ontId : {}; 
         text += `
 [Term]
 id: `+ontid+`
 name: `+label+`
-def: " `+description.replaceAll('"','\\"')+`"
-xref: `+ ontId+`
 comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+"\n"+`
 subset: samples
-
-
-`
+def: " `+description.replaceAll('"','\\"')+`"`+xrefOnt+`
+relationship: `+mandatoryDict[mandatory] +  ` ENACL:0`+checklistNo.slice(2);
         
        // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
         
