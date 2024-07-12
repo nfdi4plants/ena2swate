@@ -270,10 +270,9 @@ xref: `+ ontId : {};
 [Term]
 id: `+ontid+`
 name: `+label+`
-comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+"\n"+`
-subset: samples
+comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+"\n"+`subset: samples
 def: " `+description.replaceAll('"','\\"')+`"`+xrefOnt+`
-relationship: `+mandatoryDict[mandatory] +  ` ENACL:0`+checklistNo.slice(2);
+relationship: `+mandatoryDict[mandatory] +  ` ENACL:0`+checklistNo.slice(2)+"/n";
         
        // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
         
