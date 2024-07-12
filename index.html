@@ -265,14 +265,16 @@ def: " Optional in the metadata. The validation will only log the information, i
         //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
         let ontid = "ENACL:" + (100+parseInt(number)).toString()+ (1000+parseInt(index)).toString();
         let xrefOnt = ontId ? `
-xref: `+ ontId : {}; 
+xref: `+ ontId : ""; 
+
         text += `
 [Term]
 id: `+ontid+`
 name: `+label+`
 comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+`
 subset: samples
-def: " `+description.replaceAll('"','\\"')+`"`+xrefOnt+`
+def: " `+description.replaceAll('"','\\"')+`"
+`+xrefOnt+`
 relationship: `+mandatoryDict[mandatory] +  ` ENACL:0`+checklistNo.slice(2)+"\n";
         
        // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
