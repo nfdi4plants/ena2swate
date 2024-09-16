@@ -128,7 +128,30 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
   console.log("did not found ontology: ")
       return "";
 }
+function enaTerm2Label(termName, id1="1" ,listId="all" ){
+  //console.log("termName is: " + termName)
+  for (const [index,element] of Object.entries(googleJSON)){
+    //console.log("Field Name is: " + element["Field Name"]);
+    if ((termName=="5\'_PARTIAL")||(termName=="3\'_PARTIAL") ){
+      
+      var condition = (element["Field Name"] == termName)&&((element["Checklist"] == id1+":"+listId) );
+    } else {
+      var condition = (element["Field Name"] == termName) ;
+    }
 
+
+    if (condition)
+    {
+      //console.log("found 5\'_PARTIAL ontology: " +termName+ element.id);
+      return element.ontName;
+      
+    }else{
+      
+    }
+  }
+  console.log("did not found ontology: ")
+      return "";
+}
   async function fetchENAXML(ENAall, ENAURL){
     for (const [index, url] of ENAURL.entries()){ 
       try {
@@ -533,7 +556,8 @@ function template(id1, listName){
           <tbody>` ;
     const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
         for (const [index, element] of Object.entries(list2) ){
-          const label = element.querySelector("LABEL").innerHTML;
+          const label = element.querySelector("LABEL").innerHTML; //old label name
+
           const mandatory = element.querySelector("MANDATORY").innerHTML;
           const include = (ele)=> ele === mandatory;
           if (selected.some(include))
@@ -541,9 +565,9 @@ function template(id1, listName){
             //console.log(element.innerHTML)
             
             const ontId = enaTerm2Ont(label, id1, checklistNo);
-            
+            const label1 =  enaTerm2Label(label, id1, checklistNo)
             tableHTML1 += `<tr>
-              <th name="LABEL" scope="row">`+label+`</th>
+              <th name="LABEL" scope="row">`+label1+`</th>
               <td>
                 <select class="form-select" name="type" aria-label="characteristic or factor">
                   <option value="characteristic" selected> Characteristic (default) </option>
