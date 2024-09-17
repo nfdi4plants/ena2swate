@@ -9,17 +9,25 @@ The ENA Checklists to SWATE Template project is a web-based tool that allows use
 ## Features
 
 - Fetches ENA checklists for samples, raw reads, and data analyses
+
 - Allows users to search and select the desired checklist
+
 - Generates SWATE templates based on the selected checklist and user preferences (mandatory, recommended, optional fields)
+
 - Provides options to download the generated SWATE templates
+
+
 
 ## Usage
 
-1. Open the web application in a compatible browser.
-2. Select the desired checklist (samples, raw reads, or data analyses) from the dropdown or search for a specific checklist.
-3. Choose the desired fields to include in the template (mandatory, recommended, optional).
-4. Click the corresponding "Download" button to generate and download the SWATE template.
-
+### 1. Open the web application in a compatible browser.
+![image](https://github.com/user-attachments/assets/f5bcee0a-b24e-400c-a015-05fcef8621f2)
+### 2. Select the desired checklist (samples, raw reads, or data analyses) from the dropdown or search for a specific checklist.
+![image](https://github.com/user-attachments/assets/4d1f459b-343d-493f-8916-101405bf0ec6)
+### 3. Choose the desired fields to include in the template (mandatory, recommended, optional).
+![image](https://github.com/user-attachments/assets/c55d6564-bc13-442a-a0bc-61e22d0a79ba)
+### 4. Click the corresponding "Download" button to generate and download the SWATE template.
+![image](https://github.com/user-attachments/assets/d80d8413-1bfd-4b6f-bf92-4c3d7e66b97c)
 ## Installation
 
 1. Clone the repository:
