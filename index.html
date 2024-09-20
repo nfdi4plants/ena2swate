@@ -128,6 +128,8 @@ function enaTerm2Ont(termName, id1="1" ,listId="all" ){
   console.log("did not found ontology: ")
       return "";
 }
+
+
 function enaTerm2Label(termName, id1="1" ,listId="all" ){
   //console.log("termName is: " + termName)
   for (const [index,element] of Object.entries(googleJSON)){
@@ -546,7 +548,8 @@ function template(id1, listName){
       <table class="table table-striped table-hover">
           <thead>
             <tr>
-              <th scope="col">Term Name</th>
+              <th scope="col">ENA Term Name</th>
+              <th scope="col">Ontology Term Name</th>
               <th scope="col">Term Type</th>
               <th scope="col">Requirement</th>
               <th scope="col">Ontology</th>
@@ -565,9 +568,13 @@ function template(id1, listName){
             //console.log(element.innerHTML)
             
             const ontId = enaTerm2Ont(label, id1, checklistNo);
-            const label1 =  enaTerm2Label(label, id1, checklistNo)
+            
+            const label1 =  enaTerm2Label(label, id1, checklistNo);
             tableHTML1 += `<tr>
-              <th name="LABEL" scope="row">`+label1+`</th>
+              <th name="LABEL" scope="row">`+label+`</th>
+              <td name="ontLabel">`+ label1+  ` 
+
+                </td>
               <td>
                 <select class="form-select" name="type" aria-label="characteristic or factor">
                   <option value="characteristic" selected> Characteristic (default) </option>
@@ -706,7 +713,8 @@ function template(id1, listName){
       <table class="table table-striped table-hover">
           <thead>
             <tr>
-              <th scope="col">Term Name</th>
+              <th scope="col">ENA Term Name</th>
+              <th scope="col">Ontology Term Name</th>
               <th scope="col">Term Type</th>
               <th scope="col">Mandatory</th>
               <th scope="col">Ontology</th>
@@ -724,9 +732,10 @@ function template(id1, listName){
             //console.log(element.innerHTML)
             
             const ontId = enaTerm2Ont(label);
-            
+            const label1 = enaTerm2Label(label, id1, checklistNo);
             tableHTML1 += `<tr>
               <th name="LABEL" scope="row">`+label+`</th>
+              <th name="LABEL" scope="row">`+label1+`</th>
               <td>
                 <select class="form-select" name="type" aria-label="characteristic or factor">
                   <option value="characteristic" selected> Characteristic (default) </option>
