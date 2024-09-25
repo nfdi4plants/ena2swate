@@ -524,7 +524,13 @@ function template(id1, listName){
       };
   }());
 
-
+  function exludeHigherMetada(term){
+    if ((term.toLowerCase() =="sample" )||(term.toLowerCase() =="source" )||(term.toLowerCase() =="electronic file name" )||(term.toLowerCase() =="study" ) ){
+      return false
+    }else{
+      return true
+    }
+  }
   function checkInput(checkName, id1){
     var selected = []; 
     document.querySelectorAll("input[name="+checkName+"]").forEach((ele)=> {if(ele.checked){ selected.push(ele.value)  }}  ); 
@@ -563,7 +569,7 @@ function template(id1, listName){
 
           const mandatory = element.querySelector("MANDATORY").innerHTML;
           const include = (ele)=> ele === mandatory;
-          if (selected.some(include))
+          if (selected.some(include)&&(exludeHigherMetada(label)))
           {
             //console.log(element.innerHTML)
             
@@ -572,7 +578,7 @@ function template(id1, listName){
             const label1 =  enaTerm2Label(label, id1, checklistNo);
             tableHTML1 += `<tr>
               <th name="LABEL" scope="row">`+label+`</th>
-              <td name="ontLabel">`+ label1+  ` 
+              <td name="LABEL2">`+ label1+  ` 
 
                 </td>
               <td>
@@ -727,7 +733,7 @@ function template(id1, listName){
           const label = element.label;
           const mandatory = element.mandatory? "mandatory": "optional" ;
           const include = (ele)=> ele === mandatory;
-          if (selected.some(include))
+          if (selected.some(include)&&(exludeHigherMetada(label)))
           {
             //console.log(element.innerHTML)
             
@@ -735,7 +741,7 @@ function template(id1, listName){
             const label1 = enaTerm2Label(label, id1, checklistNo);
             tableHTML1 += `<tr>
               <th name="LABEL" scope="row">`+label+`</th>
-              <th name="LABEL" scope="row">`+label1+`</th>
+              <th name="LABEL2" scope="row">`+label1+`</th>
               <td>
                 <select class="form-select" name="type" aria-label="characteristic or factor">
                   <option value="characteristic" selected> Characteristic (default) </option>
@@ -787,7 +793,7 @@ function template(id1, listName){
           document.getElementById("modal"+id1+"button").click();
   }
    </script>
-   <script src="js/main.js"></script>
+   <script src="js/main2.js"></script>
    <div class="row" style="background: rgb(45, 62, 80); height: 3.25rem; margin: 0 0 0 0px; padding: 0 0 0 0; ">
     <a class="" href="https://nfdi4plants.org/" >
       <img src="images/logo.png" alt="Logo" width="32" height="32" style="position: absolute; margin: 8px 12px 8px 12px; left: 0px; padding-top: 0px;" />
