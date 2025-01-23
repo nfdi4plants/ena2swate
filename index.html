@@ -298,8 +298,7 @@ id: `+ontid+`
 name: `+label+`
 comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+`
 subset: samples
-def: " `+description.replaceAll('"','\\"')+`"
-`+xrefOnt+`
+def: " `+description.replaceAll('"','\\"')+`"`+xrefOnt+`
 relationship: `+mandatoryDict[mandatory] +  ` ENACL:0`+checklistNo.slice(2)+"\n";
         
        // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
@@ -531,6 +530,45 @@ function template(id1, listName){
       return true
     }
   }
+  function XMLtemplate(label, mandatory, ontId, id1) {
+
+    return `<tr>
+              <th name="LABEL" scope="row">`+label+`</th>
+              <td>
+                <select class="form-select" name="type" aria-label="characteristic or factor">
+                  <option value="characteristic" selected> Characteristic (default) </option>
+                  <option value="component">Component</option>
+                  <option value="factor">Factor</option>
+                  <option value="parameter">Parameter</option>
+                  
+                  <!--<option value="protocolType">protocolType</option>
+                  <option value="protocolDescription">protocolDescription</option>
+                  <option value="protocolUri">protocolUri</option>
+                  <option value="protocolVersion">protocolVersion</option>
+                  <option value="protocolREF">protocolREF</option>
+                  <option value="performer">performer</option>
+                  <option value="date">date</option>
+                  <option value="input">input</option>
+                  <option value="output">output</option>
+                  <option value="freeText">freeText</option>-->
+
+                </select>
+                
+                </td>
+              <td name="MANDATORY">`+mandatory+`</td>
+              <td name="ontId">`+ontId+`</td>
+              <td>
+                <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="modalTableList`+id1+`" id="`+label+`checkbox" checked>
+                <label class="form-check-label" for="`+label+`checkbox" >
+                
+                </label>
+                </div>
+              </td>
+              </tr>`;    
+  }
+
+
   function checkInput(checkName, id1){
     var selected = []; 
     document.querySelectorAll("input[name="+checkName+"]").forEach((ele)=> {if(ele.checked){ selected.push(ele.value)  }}  ); 
@@ -564,6 +602,8 @@ function template(id1, listName){
           </thead>
           <tbody>` ;
     const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
+    tableHTML1 += XMLtemplate("organism", "mandatory", "OBI:0100026", id1)
+    tableHTML1 += XMLtemplate("taxonomy: NCBI TaxID", "mandatory", "MS:1001467", id1)
         for (const [index, element] of Object.entries(list2) ){
           const label = element.querySelector("LABEL").innerHTML; //old label name
 
