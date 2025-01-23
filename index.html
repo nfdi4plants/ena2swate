@@ -530,10 +530,18 @@ function template(id1, listName){
       return true
     }
   }
+<<<<<<< HEAD
   function XMLtemplate(label, mandatory, ontId, id1) {
+=======
+
+  function XMLtemplate(label, label1, mandatory, ontId, id1) {
+>>>>>>> 483f754 (fix table)
 
     return `<tr>
               <th name="LABEL" scope="row">`+label+`</th>
+              <td name="LABEL2">`+ label1+  ` 
+
+                </td>
               <td>
                 <select class="form-select" name="type" aria-label="characteristic or factor">
                   <option value="characteristic" selected> Characteristic (default) </option>
@@ -602,8 +610,8 @@ function template(id1, listName){
           </thead>
           <tbody>` ;
     const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
-    tableHTML1 += XMLtemplate("organism", "mandatory", "OBI:0100026", id1)
-    tableHTML1 += XMLtemplate("taxonomy: NCBI TaxID", "mandatory", "MS:1001467", id1)
+    tableHTML1 += XMLtemplate("organism", "organism", "mandatory", "OBI:0100026", id1)
+    tableHTML1 += XMLtemplate("taxonomy: NCBI TaxID", "taxonomy: NCBI TaxID", "mandatory", "MS:1001467", id1)
         for (const [index, element] of Object.entries(list2) ){
           const label = element.querySelector("LABEL").innerHTML; //old label name
 
@@ -614,6 +622,7 @@ function template(id1, listName){
             //console.log(element.innerHTML)
             
             const ontId = enaTerm2Ont(label, id1, checklistNo);
+<<<<<<< HEAD
             
             const label1 =  enaTerm2Label(label, id1, checklistNo);
             tableHTML1 += `<tr>
@@ -653,6 +662,12 @@ function template(id1, listName){
                 </div>
               </td>
               </tr>`;
+=======
+            const label1 =  enaTerm2Label(label, id1, checklistNo);
+
+            tableHTML1 += XMLtemplate(label, label1, mandatory, ontId, id1)  ;
+
+>>>>>>> 483f754 (fix table)
 
           }
 
