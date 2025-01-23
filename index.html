@@ -530,12 +530,8 @@ function template(id1, listName){
       return true
     }
   }
-<<<<<<< HEAD
-  function XMLtemplate(label, mandatory, ontId, id1) {
-=======
 
   function XMLtemplate(label, label1, mandatory, ontId, id1) {
->>>>>>> 483f754 (fix table)
 
     return `<tr>
               <th name="LABEL" scope="row">`+label+`</th>
@@ -622,52 +618,10 @@ function template(id1, listName){
             //console.log(element.innerHTML)
             
             const ontId = enaTerm2Ont(label, id1, checklistNo);
-<<<<<<< HEAD
-            
-            const label1 =  enaTerm2Label(label, id1, checklistNo);
-            tableHTML1 += `<tr>
-              <th name="LABEL" scope="row">`+label+`</th>
-              <td name="LABEL2">`+ label1+  ` 
-
-                </td>
-              <td>
-                <select class="form-select" name="type" aria-label="characteristic or factor">
-                  <option value="characteristic" selected> Characteristic (default) </option>
-                  <option value="component">Component</option>
-                  <option value="factor">Factor</option>
-                  <option value="parameter">Parameter</option>
-                  
-                  <!--<option value="protocolType">protocolType</option>
-                  <option value="protocolDescription">protocolDescription</option>
-                  <option value="protocolUri">protocolUri</option>
-                  <option value="protocolVersion">protocolVersion</option>
-                  <option value="protocolREF">protocolREF</option>
-                  <option value="performer">performer</option>
-                  <option value="date">date</option>
-                  <option value="input">input</option>
-                  <option value="output">output</option>
-                  <option value="freeText">freeText</option>-->
-
-                </select>
-                
-                </td>
-              <td name="MANDATORY">`+mandatory+`</td>
-              <td name="ontId">`+ontId+`</td>
-              <td>
-                <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="modalTableList`+id1+`" id="`+label+`checkbox" checked>
-                <label class="form-check-label" for="`+label+`checkbox" >
-                
-                </label>
-                </div>
-              </td>
-              </tr>`;
-=======
             const label1 =  enaTerm2Label(label, id1, checklistNo);
 
             tableHTML1 += XMLtemplate(label, label1, mandatory, ontId, id1)  ;
 
->>>>>>> 483f754 (fix table)
 
           }
 
