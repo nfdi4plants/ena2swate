@@ -252,13 +252,17 @@ function enaTerm2Label(termName, id1="1" ,listId="all" ){
       while ((list1 != undefined)){
         var checklistNo = list1.getAttribute("accession");
         console.log("number "+ checklistNr +" accession is "+ checklistNo);
+        header += `
+[Term]
+id: ENAER:0`+checklistNo.slice(3)+`
+name: `+checklistNo+`
+def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
+xref: ENAER:1000008
+        
+        `
       if (checklistNr == checklistNo){
       number +=1;
       let Term1 =`
-[Term]
-id: ENAER:0`+checklistNo.slice(2)+`
-name: `+checklistNo+`
-def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
       
 [Typedef]
 id: ENAER:1000001
@@ -268,17 +272,79 @@ def: " Must exist in the metadata. The validation will fail if the term or an Xr
 id: ENAER:1000002
 name: Recommended
 def: " Recommended to be in the metadata. The validation will give warnings if the term or an Xref term does not exist."
+
 [Typedef]
 id: ENAER:1000003
 name: Optional
 def: " Optional in the metadata. The validation will only log the information, if the term or an Xref term does not exist."
-      `
+      
+[Term]
+id: ENAER:1000004
+name: "ISA Study"
+def: ""
+xref: STDMSO:00000002  #CvTerm.create("STDMSO:00000002","STUDY","STDMSO")
+
+[Term]
+id: ENAER:1000005
+name: "ISA Assay"
+def: ""
+xref: ASSMSO:00000002 # CvTerm.create("ASSMSO:00000002","ASSAY","ASSMSO")
+
+[Term]
+id: ENAER:1000006
+name: "ENA Sample Field"
+def: "A field in the ENA sample checklist"
+xref:STDMSO:00000021
+
+[Term]
+id: ENAER:1000007
+name: "Text field"
+def: "Free text field without validation"
+
+[Term]
+id: ENAER:1000008
+name: "ENA Sample Checlist"
+def: "A checklist fo ENA samples"
+
+[Term]
+id: ENAER:1001001
+name: "tax_id"
+def: "Taxonomy ID of the organism as in the NCBI Taxonomy database. Entries in the NCBI Taxonomy database have integer taxon IDs."
+xref:ENAER:0000037
+xref:ENAER:1000006
+xref:ENAER:1000007
+
+[Term]
+id: ENAER:1001002
+name: "scientific_name"
+def: "Scientific name of the organism as in the NCBI Taxonomy database. Scientific names typically follow the binomial nomenclature. For example, the scientific name for humans is Homo sapiens."
+
+[Term]
+id: ENAER:1001003
+name: "sample_alias"
+def: "Unique name of the sample. If not selected system will auto generate an unique alias"
+
+[Term]
+id: ENAER:1001004
+name: "sample_title"
+def: "Title of the sample"
+
+[Term]
+id: ENAER:1001005
+name: "sample_description"
+def: "Description of the sample"
+
+
+
+
+`
       const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
       var text = header + Term1;
+      let mandatory = "";
         for (const [index, element] of Object.entries(list2) ){
           const label = element.querySelector("LABEL").innerHTML;
           const description = element.querySelector("DESCRIPTION").innerHTML;
-          const mandatory = element.querySelector("MANDATORY").innerHTML;
+          mandatory = element.querySelector("MANDATORY").innerHTML;
           var units;
           const ontId = enaTerm2Ont(label, id1, checklistNo);
           try{
@@ -291,35 +357,51 @@ def: " Optional in the metadata. The validation will only log the information, i
           var fieldValidate;
           try{
           fieldValidate = element.querySelector("FIELD_TYPE").innerHTML.toString();
+          switch (fieldType){
+            case "TEXT_CHOICE_FIELD":
+              
+            case "REGEX_VALUE":
+              
+          }
           }catch(e){fieldValidate = " "}
         //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
+        const fieldValid = fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "")
+        .replace(/(?:\r\n|\r|\n)/g, "")
+        .replaceAll("{","\\{")
+        .replaceAll("}","\\}")
+        .replaceAll("<TEXT_FIELD>", "")
+        .replaceAll("</TEXT_FIELD>", "")
+        .replaceAll("<TEXT_CHOICE_FIELD>", "")
+        .replaceAll("</TEXT_CHOICE_FIELD>", "");
         let ontid = "ENAER:" + (100+parseInt(number)).toString()+ (1000+parseInt(index)).toString();
         let xrefOnt = ontId ? `
 xref: `+ ontId : ""; 
-
+if(mandatory == "mandatory"){
         text += `
 [Term]
 id: `+ontid+`
 name: `+label+`
-comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "").replaceAll("{","\\{").replaceAll("}","\\}")+`
+comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValid+`
 subset: samples
 def: " `+description.replaceAll('"','\\"')+`"`+xrefOnt+`
 relationship: `+mandatoryDict[mandatory] +  ` ENAER:0`+checklistNo.slice(3)+"\n";
-        
+} 
        // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
-        
-
-
       }
         var element2 = document.createElement('a');
         element2.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
         element2.setAttribute('download', checklistNo+"_validation_info.obo" );
 
         element2.style.display = 'none';
-        document.body.appendChild(element2);
-      
+        
+        console.log(mandatory);
         //element2.click();
-        linkList.appendChild(element2);
+        
+          document.body.appendChild(element2);
+          linkList.appendChild(element2);
+        
+        
+       
         //console.log(linkList);
       }
         list1 = checklists1.iterateNext();
@@ -327,7 +409,7 @@ relationship: `+mandatoryDict[mandatory] +  ` ENAER:0`+checklistNo.slice(3)+"\n"
   }
   
   const listArray = Array.prototype.slice.call(linkList.querySelectorAll("a"));
-  //console.log(listArray);
+
   //listArray[0].click();
   for (const [ id, link] of Object.entries(listArray)){
     //console.log("id "+id+ " "+link)
@@ -359,7 +441,7 @@ function ena2csv(id1){
       while (list1 != undefined){
       var checklistNo = list1.getAttribute("accession");
       number +=1;
-      console.log("number "+ number +"accession is "+ checklistNo);
+      console.log(checklistNo);
       const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
       var text = "label\tmandatory2\tunits\tfieldType\tfieldValidate\n";
         for (const [index, element] of Object.entries(list2) ){
