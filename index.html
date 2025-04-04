@@ -204,6 +204,34 @@ function enaTerm2Label(termName, id1="1" ,listId="all" ){
 
 
 
+    function textValues(xmlString, idCounter){
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(xmlString, "application/xml");
+
+      // Extract all <TEXT_VALUE> nodes
+      const textValues = xmlDoc.getElementsByTagName("TEXT_VALUE");
+
+      // Generate OBO terms
+      let oboTerms = [];
+      let idCounter = 1371001;
+      for (let i = 0; i < textValues.length; i++) {
+          const valueNode = textValues[i].getElementsByTagName("VALUE")[0];
+          if (valueNode) {
+            const value = valueNode.textContent;
+            const term = `
+        [Term]
+        id: ENAER:${idCounter}
+        name: "CONSTRAINT: TEXT_CHOICE_FIELD"
+        def: "${value}"
+        `;
+            oboTerms.push(term);
+            idCounter++;
+          }
+        }
+      return oboTerms;
+    
+    }
+
   function ena2ont(id1= 0, checklistNr="ERC000037"){
   checklistNr=  checklistNr==""?  "ERC000037":checklistNr; 
   var linkList = document.createElement('div');
@@ -233,9 +261,9 @@ function enaTerm2Label(termName, id1="1" ,listId="all" ){
       treat-xrefs-as-equivalent: NFDI4PSO
       remark: INVMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/INVMSO.fs
       treat-xrefs-as-equivalent: STDMSO
-      remark STDMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/STDMSO.fs
+      remark: STDMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/STDMSO.fs
       treat-xrefs-as-equivalent: ASSMSO
-      remark ASSMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/ASSMSO.fs
+      remark: ASSMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/ASSMSO.fs
       !remark: coverage: ENA checkilist definition
       !remark: creator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
       !remark: curator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
@@ -282,13 +310,13 @@ def: " Optional in the metadata. The validation will only log the information, i
 id: ENAER:1000004
 name: "ISA Study"
 def: ""
-xref: STDMSO:00000002  #CvTerm.create("STDMSO:00000002","STUDY","STDMSO")
+xref: STDMSO:00000002 
 
 [Term]
 id: ENAER:1000005
 name: "ISA Assay"
 def: ""
-xref: ASSMSO:00000002 # CvTerm.create("ASSMSO:00000002","ASSAY","ASSMSO")
+xref: ASSMSO:00000002 
 
 [Term]
 id: ENAER:1000006
@@ -371,6 +399,7 @@ def: "Description of the sample"
         .replaceAll("}","\\}")
         .replaceAll("<TEXT_FIELD>", "")
         .replaceAll("</TEXT_FIELD>", "")
+        .replaceAll("<TEXT_FIELD/>", "")
         .replaceAll("<TEXT_CHOICE_FIELD>", "")
         .replaceAll("</TEXT_CHOICE_FIELD>", "");
         let ontid = "ENAER:" + (100+parseInt(number)).toString()+ (1000+parseInt(index)).toString();
