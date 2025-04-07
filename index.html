@@ -204,38 +204,36 @@ function enaTerm2Label(termName, id1="1" ,listId="all" ){
 
 
 
-    function textValues(xmlString, idCounter){
+    function textValues(text1, xmlString, idCounter, parentId){
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlString, "application/xml");
 
       // Extract all <TEXT_VALUE> nodes
-      const textValues = xmlDoc.getElementsByTagName("TEXT_VALUE");
-
-      // Generate OBO terms
-      let oboTerms = [];
-      let idCounter = 1371001;
-      for (let i = 0; i < textValues.length; i++) {
-          const valueNode = textValues[i].getElementsByTagName("VALUE")[0];
+      const textValue = xmlDoc.getElementsByTagName("TEXT_VALUE");
+      for (let i = 0; i < textValue.length; i++) {
+          const valueNode = textValue[i].getElementsByTagName("VALUE")[0];
           if (valueNode) {
             const value = valueNode.textContent;
-            const term = `
-        [Term]
-        id: ENAER:${idCounter}
-        name: "CONSTRAINT: TEXT_CHOICE_FIELD"
-        def: "${value}"
+            text1 += `
+[Term]
+id: ENAER:${idCounter}
+name: ${value}+"CONSTRAINT: TEXT_CHOICE_FIELD"
+def: "${value}"
+relationship: is_a ${parentId}
+
         `;
-            oboTerms.push(term);
+        ;
             idCounter++;
           }
         }
-      return oboTerms;
+      return text1;
     
     }
 
   function ena2ont(id1= 0, checklistNr="ERC000037"){
   checklistNr=  checklistNr==""?  "ERC000037":checklistNr; 
   var linkList = document.createElement('div');
- 
+  const lastNumbers = checklistNr.slice(3);
   const checklists1 = ENAall[id1].evaluate(
       "//CHECKLIST",
       ENAall[id1],
@@ -338,35 +336,47 @@ def: "A checklist fo ENA samples"
 id: ENAER:1001001
 name: "tax_id"
 def: "Taxonomy ID of the organism as in the NCBI Taxonomy database. Entries in the NCBI Taxonomy database have integer taxon IDs."
-xref:ENAER:0000037
-xref:ENAER:1000006
-xref:ENAER:1000007
+relationship: part_of ENAER:0000037 
+relationship: is_a ENAER:1000006 
+relationship: has_a ENAER:1000007
 
 [Term]
 id: ENAER:1001002
 name: "scientific_name"
 def: "Scientific name of the organism as in the NCBI Taxonomy database. Scientific names typically follow the binomial nomenclature. For example, the scientific name for humans is Homo sapiens."
+relationship: part_of ENAER:0000037 
+relationship: is_a ENAER:1000006 
+relationship: has_a ENAER:1000007
 
 [Term]
 id: ENAER:1001003
 name: "sample_alias"
 def: "Unique name of the sample. If not selected system will auto generate an unique alias"
+relationship: part_of ENAER:0000037 
+relationship: is_a ENAER:1000006 
+relationship: has_a ENAER:1000007
 
 [Term]
 id: ENAER:1001004
 name: "sample_title"
 def: "Title of the sample"
+relationship: part_of ENAER:0000037 
+relationship: is_a ENAER:1000006 
+relationship: has_a ENAER:1000007
 
 [Term]
 id: ENAER:1001005
 name: "sample_description"
 def: "Description of the sample"
-
+relationship: part_of ENAER:0000037 
+relationship: is_a ENAER:1000006 
+relationship: has_a ENAER:1000007
 
 
 
 `
-      const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
+    let addTermNo = parseInt("1"+lastNumbers+"1000");
+    const list2 = Array.prototype.slice.call(list1.querySelectorAll("FIELD"));
       var text = header + Term1;
       let mandatory = "";
         for (const [index, element] of Object.entries(list2) ){
@@ -375,6 +385,10 @@ def: "Description of the sample"
           mandatory = element.querySelector("MANDATORY").innerHTML;
           var units;
           const ontId = enaTerm2Ont(label, id1, checklistNo);
+          let fieldValid;
+         
+        let ontid = (100+parseInt(number)).toString()+ (1000+parseInt(index)).toString();
+        let xrefOnt = ontId ? `xref: `+ ontId : ""; 
           try{
              units = element.querySelector("UNITS").querySelector("UNIT").innerHTML;
           }catch(e){units = "no unit"; }
@@ -385,15 +399,7 @@ def: "Description of the sample"
           var fieldValidate;
           try{
           fieldValidate = element.querySelector("FIELD_TYPE").innerHTML.toString();
-          switch (fieldType){
-            case "TEXT_CHOICE_FIELD":
-              
-            case "REGEX_VALUE":
-              
-          }
-          }catch(e){fieldValidate = " "}
-        //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
-        const fieldValid = fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "")
+          fieldValid = fieldValidate.replaceAll(/(?:\r\n|\r|\n)/g, "")
         .replace(/(?:\r\n|\r|\n)/g, "")
         .replaceAll("{","\\{")
         .replaceAll("}","\\}")
@@ -402,18 +408,40 @@ def: "Description of the sample"
         .replaceAll("<TEXT_FIELD/>", "")
         .replaceAll("<TEXT_CHOICE_FIELD>", "")
         .replaceAll("</TEXT_CHOICE_FIELD>", "");
-        let ontid = "ENAER:" + (100+parseInt(number)).toString()+ (1000+parseInt(index)).toString();
-        let xrefOnt = ontId ? `
-xref: `+ ontId : ""; 
+
+          }catch(e){fieldValidate = " "}
+        //console.log("csv will be: "+ label+", "+ mandatory+", "+ units+", "+fieldType+", "+fieldValidate );
+        
 if(mandatory == "mandatory"){
+
+  switch (fieldType){
+            case "TEXT_CHOICE_FIELD":
+            ontid= parseInt(ontid) +1;
+                text += `
+[Term]
+id: ${ontid}
+name: TEXT_CHOICE_FIELD of`+label+`
+comment: 
+subset: samples
+def: "TEXT_CHOICE_FIELD of`+label+`
+relationship: `+mandatoryDict[mandatory]+`;
+relationship: part_of ENAER:0000037 
+relationship: is_a ENAER:1000006
+relationship: has_a ENAER:1000007`
+text = textValues(  text, fieldValidate ,ontid, ontid );
+            case "REGEX_VALUE":
+              
+          }
         text += `
 [Term]
-id: `+ontid+`
+id: ENAER:`+ontid+`
 name: `+label+`
 comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValid+`
 subset: samples
 def: " `+description.replaceAll('"','\\"')+`"`+xrefOnt+`
-relationship: `+mandatoryDict[mandatory] +  ` ENAER:0`+checklistNo.slice(3)+"\n";
+relationship: part_of ENAER:0000037 
+relationship: is_a ENAER:1000006 
+`
 } 
        // label+"\t"+ mandatory+"\t"+ units+"\t"+fieldType+"\t"+fieldValidate.replace(/(?:\r\n|\r|\n)/g, "").replace(/(?:\r\n|\r|\n)/g, "")+"\n"
       }
