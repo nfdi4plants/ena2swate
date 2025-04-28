@@ -220,7 +220,7 @@ function enaTerm2Label(termName, id1="1" ,listId="all" ){
 id: ENAER:${idCounter}
 name: ${value}+"CONSTRAINT: TEXT_CHOICE_FIELD"
 def: "${value}"
-relationship: is_a ENAER: ${parentId}
+relationship: is_a ENAER:${parentId}
         `;
         ;
             idCounter++;
@@ -245,28 +245,28 @@ relationship: is_a ENAER: ${parentId}
       var list1 = checklists1.iterateNext();
       var number = 0;
       let header =`
-      format-version: 1.4
-      data-version: 0.1
-      date: 31:03:2025 12:00
-      saved-by: xiaoranzhou
-      auto-generated-by: ena2ont
-      subsetdef: sample "CHECKLIST SET for samples"
-      subsetdef: rawread "CHECKLIST SET for rawreads"
-      subsetdef: sequence "CHECKLIST SET for sequences"
-      treat-xrefs-as-equivalent: MIAPPE
-      treat-xrefs-as-equivalent: NCBITaxon
-      treat-xrefs-as-equivalent: NCIT
-      treat-xrefs-as-equivalent: NFDI4PSO
-      remark: INVMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/INVMSO.fs
-      treat-xrefs-as-equivalent: STDMSO
-      remark: STDMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/STDMSO.fs
-      treat-xrefs-as-equivalent: ASSMSO
-      remark: ASSMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/ASSMSO.fs
-      !remark: coverage: ENA checkilist definition
-      !remark: creator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
-      !remark: curator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
-      !remark: first tree numbers of the IDs are checklsit numbers, and last 4 numbers are the term ids
-      ontology: enaer
+format-version: 1.4
+data-version: 0.1
+date: 31:03:2025 12:00
+saved-by: xiaoranzhou
+auto-generated-by: ena2ont
+subsetdef: sample "CHECKLIST SET for samples"
+subsetdef: rawread "CHECKLIST SET for rawreads"
+subsetdef: sequence "CHECKLIST SET for sequences"
+treat-xrefs-as-equivalent: MIAPPE
+treat-xrefs-as-equivalent: NCBITaxon
+treat-xrefs-as-equivalent: NCIT
+treat-xrefs-as-equivalent: DPBO
+remark: INVMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/INVMSO.fs
+treat-xrefs-as-equivalent: STDMSO
+remark: STDMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/STDMSO.fs
+treat-xrefs-as-equivalent: ASSMSO
+remark: ASSMSO-URL: https://raw.githubusercontent.com/nfdi4plants/ARCTokenization/refs/heads/main/src/ARCTokenization/structural_ontologies/ASSMSO.fs
+!remark: coverage: ENA checkilist definition
+!remark: creator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
+!remark: curator: Xiaoran Zhou <x.zhou<-at->fz-juelich.de>
+!remark: first tree numbers of the IDs are checklsit numbers, and last 4 numbers are the term ids
+ontology: enaer
       `;
 
       let mandatoryDict = {
@@ -284,7 +284,7 @@ relationship: is_a ENAER: ${parentId}
 id: ENAER:0`+checklistNo.slice(3)+`
 name: `+checklistNo+`
 def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
-is_a: ENAER:1000008
+relationship: is_a ENAER:1000008
         `
       if (checklistNr == checklistNo){
       number +=1;
@@ -336,6 +336,7 @@ def: "A checklist fo ENA samples"
 id: ENAER:1001001
 name: "tax_id"
 def: "Taxonomy ID of the organism as in the NCBI Taxonomy database. Entries in the NCBI Taxonomy database have integer taxon IDs."
+xref: NCITC:164641
 relationship: part_of ENAER:0000037 
 relationship: is_a ENAER:1000006 
 relationship: has_a ENAER:1000007
@@ -344,6 +345,7 @@ relationship: has_a ENAER:1000007
 id: ENAER:1001002
 name: "scientific_name"
 def: "Scientific name of the organism as in the NCBI Taxonomy database. Scientific names typically follow the binomial nomenclature. For example, the scientific name for humans is Homo sapiens."
+xref: NCIT:C43459
 relationship: part_of ENAER:0000037 
 relationship: is_a ENAER:1000006 
 relationship: has_a ENAER:1000007
@@ -352,6 +354,7 @@ relationship: has_a ENAER:1000007
 id: ENAER:1001003
 name: "sample_alias"
 def: "Unique name of the sample. If not selected system will auto generate an unique alias"
+xref: MS:1000457
 relationship: part_of ENAER:0000037 
 relationship: is_a ENAER:1000006 
 relationship: has_a ENAER:1000007
@@ -360,6 +363,7 @@ relationship: has_a ENAER:1000007
 id: ENAER:1001004
 name: "sample_title"
 def: "Title of the sample"
+xref: MS:1000002
 relationship: part_of ENAER:0000037 
 relationship: is_a ENAER:1000006 
 relationship: has_a ENAER:1000007
@@ -420,17 +424,17 @@ if(mandatory == "mandatory"){
                 text += `
 
 [Term]
-id: ${ontid}
-name: TEXT_CHOICE_FIELD of ${label}
+id: ENAER:${ontid}
+name: ${label}
 comment: 
 subset: samples
 def: "TEXT_CHOICE_FIELD of ${label}
-xref:${ontId}
+xref: ${ontId}
 relationship: `+mandatoryDict[mandatory]+`;
 relationship: part_of ENAER:0000037 
 relationship: is_a ENAER:1000006
 relationship: has_a ENAER:1000007`
-text = textValues(  text, fieldValidate ,ontid, ontid );
+text = textValues(  text, fieldValidate, ontid, ontid );
             case "REGEX_VALUE":
               
           }
@@ -441,7 +445,8 @@ id: ENAER:`+ontid+`
 name: `+label+`
 comment: `+ "\t mandatory: "+ mandatory+".\t unit:"+ units+".\t field type: "+fieldType+".\t validation: "+fieldValid+`
 subset: samples
-def: " `+description.replaceAll('"','\\"')+`"`+xrefOnt+`
+def: " `+description.replaceAll('"','\\"')+`"
+${xrefOnt}
 relationship: part_of ENAER:0000037 
 relationship: is_a ENAER:1000006 
 `
