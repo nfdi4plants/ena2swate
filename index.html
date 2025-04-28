@@ -215,12 +215,12 @@ function enaTerm2Label(termName, id1="1" ,listId="all" ){
           if (valueNode) {
             const value = valueNode.textContent;
             text1 += `
+
 [Term]
 id: ENAER:${idCounter}
 name: ${value}+"CONSTRAINT: TEXT_CHOICE_FIELD"
 def: "${value}"
-relationship: is_a ${parentId}
-
+relationship: is_a ENAER: ${parentId}
         `;
         ;
             idCounter++;
@@ -279,12 +279,12 @@ relationship: is_a ${parentId}
         var checklistNo = list1.getAttribute("accession");
         console.log("number "+ checklistNr +" accession is "+ checklistNo);
         header += `
+
 [Term]
 id: ENAER:0`+checklistNo.slice(3)+`
 name: `+checklistNo+`
 def: " `+list1.querySelector("DESCRIPTOR").querySelector("LABEL").innerHTML+`"
-xref: ENAER:1000008
-        
+is_a: ENAER:1000008
         `
       if (checklistNr == checklistNo){
       number +=1;
@@ -320,7 +320,7 @@ xref: ASSMSO:00000002
 id: ENAER:1000006
 name: "ENA Sample Field"
 def: "A field in the ENA sample checklist"
-xref:STDMSO:00000021
+xref: STDMSO:00000021
 
 [Term]
 id: ENAER:1000007
@@ -418,12 +418,14 @@ if(mandatory == "mandatory"){
             case "TEXT_CHOICE_FIELD":
             ontid= parseInt(ontid) +1;
                 text += `
+
 [Term]
 id: ${ontid}
-name: TEXT_CHOICE_FIELD of`+label+`
+name: TEXT_CHOICE_FIELD of ${label}
 comment: 
 subset: samples
-def: "TEXT_CHOICE_FIELD of`+label+`
+def: "TEXT_CHOICE_FIELD of ${label}
+xref:${ontId}
 relationship: `+mandatoryDict[mandatory]+`;
 relationship: part_of ENAER:0000037 
 relationship: is_a ENAER:1000006
@@ -433,6 +435,7 @@ text = textValues(  text, fieldValidate ,ontid, ontid );
               
           }
         text += `
+
 [Term]
 id: ENAER:`+ontid+`
 name: `+label+`
@@ -796,8 +799,7 @@ function template(id1, listName){
                 uniqueList[element2.name] = newRow;
                 //console.log("added dict: "+ uniqueList[element2.name]);
                 csv += newRow[0]+"\t"+newRow[1]+"\t"+newRow[2]+"\n";
-            }
-            
+            }   
         }    
     }
     window.location.href = "data:text/tab-separated-values," + encodeURIComponent(csv);
